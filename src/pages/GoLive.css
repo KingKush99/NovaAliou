@@ -1,0 +1,72 @@
+.go-live-page {
+    height: 100vh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.camera-preview {
+    flex: 1;
+    position: relative;
+    background: #111;
+    overflow: hidden;
+}
+
+.preview-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.stream-title-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 12px;
+    outline: none;
+    backdrop-filter: blur(5px);
+}
+
+.stream-title-input::placeholder {
+    color: #aaa;
+}
+
+.camera-controls {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+}
+
+.go-live-footer {
+    padding: 20px;
+    background: #000;
+}

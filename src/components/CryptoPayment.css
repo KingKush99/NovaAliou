@@ -1,0 +1,213 @@
+.payment-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.crypto-payment-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.payment-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.2s;
+}
+
+.payment-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.crypto-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.crypto-icon {
+    color: #F7931A;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.crypto-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 8px;
+}
+
+.crypto-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.crypto-info {
+    margin-bottom: 24px;
+}
+
+.crypto-info h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.crypto-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.crypto-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+}
+
+.crypto-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.crypto-item span {
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+}
+
+.crypto-benefits {
+    padding: 16px;
+    background: rgba(0, 255, 136, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.crypto-benefits p {
+    margin: 6px 0;
+    font-size: 13px;
+    color: #00ff88;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crypto-error {
+    background: rgba(255, 0, 68, 0.1);
+    border: 1px solid rgba(255, 0, 68, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+    color: #ff0844;
+    font-size: 14px;
+    text-align: center;
+}
+
+.crypto-pay-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #F7931A 0%, #FF9500 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(247, 147, 26, 0.4);
+}
+
+.crypto-pay-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(247, 147, 26, 0.6);
+}
+
+.crypto-pay-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.crypto-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.crypto-footer p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.crypto-note {
+    font-style: italic;
+}

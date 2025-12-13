@@ -1,0 +1,245 @@
+.model-dashboard-page {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    padding-bottom: 80px;
+    padding-top: 60px;
+}
+
+.dashboard-content {
+    padding: 20px;
+}
+
+.earnings-card {
+    background: linear-gradient(135deg, #2a2a72 0%, #009ffd 100%);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 159, 253, 0.3);
+    margin-bottom: 30px;
+}
+
+.earnings-card h2 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.earnings-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.coin-icon-lg {
+    font-size: 40px;
+    color: #FFD700;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.earnings-amount {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.earnings-rate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.earnings-usd {
+    font-size: 20px;
+    font-weight: 500;
+    color: #a8ff78;
+}
+
+.payout-section {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.payout-section h3 {
+    margin: 0 0 20px;
+    font-size: 18px;
+}
+
+.method-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+
+.method-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.method-btn.active {
+    background: var(--primary-purple);
+    color: white;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-family: inherit;
+}
+
+.info-box {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.info-box p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.info-box strong {
+    color: white;
+}
+
+.auto-payout-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.checkbox {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.checkbox.checked {
+    border-color: var(--primary-color);
+}
+
+.save-settings-btn {
+    width: 100%;
+    background: var(--primary-color);
+    color: black;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.save-settings-btn:active {
+    transform: scale(0.98);
+}
+
+/* Go Live Button */
+.go-live-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ff0844 0%, #ff4b8b 100%);
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 20px;
+    cursor: pointer;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(255, 8, 68, 0.4);
+    transition: all 0.3s;
+}
+
+.go-live-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(255, 8, 68, 0.6);
+}
+
+.go-live-btn:active {
+    transform: translateY(0);
+}
+
+.go-live-btn .btn-text {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.live-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}

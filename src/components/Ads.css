@@ -1,0 +1,105 @@
+.ad-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-video-container {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-header {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ad-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: white;
+}
+
+.ad-timer {
+    color: white;
+    font-weight: bold;
+}
+
+.ad-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ad-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #ff00cc, #333399);
+}
+
+.mock-video {
+    text-align: center;
+    color: white;
+}
+
+.cta-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.banner-ad {
+    width: 100%;
+    height: 50px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 12px;
+}
+
+.banner-ad.bottom {
+    /* position: fixed; */
+    /* bottom: 60px; */
+    /* z-index: 90; */
+    margin-top: 10px;
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

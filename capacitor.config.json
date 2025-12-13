@@ -1,0 +1,23 @@
+{
+    "appId": "com.noveltycams.app",
+    "appName": "NoveltyCams",
+    "webDir": "dist",
+    "bundledWebRuntime": false,
+    "server": {
+        "androidScheme": "https",
+        "cleartext": true
+    },
+    "plugins": {
+        "CapacitorHttp": {
+            "enabled": true
+        },
+        "GoogleAuth": {
+            "scopes": [
+                "profile",
+                "email"
+            ],
+            "serverClientId": "211356037468-t37lqacjk52oi62rbdpretftpo0srstr.apps.googleusercontent.com",
+            "forceCodeForRefreshToken": true
+        }
+    }
+}

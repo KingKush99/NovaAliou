@@ -1,0 +1,88 @@
+.history-page {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    padding-bottom: 80px;
+}
+
+.history-tabs {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    background: var(--bg-card);
+    margin-bottom: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.history-list {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: var(--bg-card);
+    border-radius: 12px;
+    gap: 15px;
+}
+
+.history-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.history-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.history-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.history-status {
+    font-size: 14px;
+}
+
+.status-duration {
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-missed {
+    color: #ff4b4b;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-transform: capitalize;
+}

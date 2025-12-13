@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "57114162226",
+        "project_id": "noveltycams-7dc7a",
+        "storage_bucket": "noveltycams-7dc7a.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:57114162226:android:ecbfb7fbffa6d2cd2db82b",
+                "android_client_info": {
+                    "package_name": "com.noveltycams.app"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyDsXr0hrFJjApkqfGiOMh0l0Co9uFbLK1c"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}

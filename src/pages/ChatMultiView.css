@@ -1,0 +1,210 @@
+.chat-multiview-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+}
+
+.multiview-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.layout-controls {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.layout-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.layout-btn.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffd700;
+}
+
+/* Grids */
+.active-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    gap: 2px;
+    background: #222;
+}
+
+.grid-layout-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.grid-layout-2 {
+    grid-template-columns: 1fr 1fr;
+    /* Side by side */
+    grid-template-rows: 1fr;
+}
+
+@media (max-width: 768px) {
+    .grid-layout-2 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+        /* Stacked on mobile */
+    }
+}
+
+.grid-layout-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* Cell */
+.grid-cell {
+    background: #000;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.cell-header {
+    height: 32px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    border-bottom: 1px solid #222;
+    font-size: 12px;
+    color: #ffd700;
+}
+
+.cell-close-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.cell-close-btn:hover {
+    color: #fff;
+}
+
+.cell-chat-wrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Tweak ChatContent when in grid mode */
+.cell-chat-wrapper .chat-messages {
+    padding-bottom: 60px;
+    /* Less padding needed maybe? */
+}
+
+/* Add Button */
+.add-chat-btn {
+    width: 100%;
+    height: 100%;
+    background: #0a0a0a;
+    border: none;
+    color: #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-chat-btn:hover {
+    background: #111;
+    color: #ffd700;
+}
+
+/* Selector Modal */
+.chat-selector-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    /* Sheet style on mobile */
+    justify-content: center;
+}
+
+.chat-selector-modal {
+    width: 100%;
+    max-width: 500px;
+    max-height: 80%;
+    background: #1a1a1a;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-selector-modal h3 {
+    margin: 0 0 16px 0;
+    color: #fff;
+    text-align: center;
+}
+
+.selector-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.selector-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.selector-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.selector-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.selector-info .name {
+    color: #fff;
+    font-weight: 600;
+}
+
+.selector-info .preview {
+    color: #888;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}

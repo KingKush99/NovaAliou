@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Default Theme (Black & Gold) */
+  --primary-color: #FFD700;
+  --primary-dark: #B8860B;
+  --primary-light: #FFE55C;
+  --accent-color: #FFA500;
+
+  /* Legacy mappings for compatibility */
+  --primary-purple: var(--primary-color);
+  --primary-purple-dark: var(--primary-dark);
+  --primary-purple-light: var(--primary-light);
+
+  /* Background Colors */
+  --bg-dark: #000000;
+  --bg-card: #111111;
+  --bg-elevated: #222222;
+  --bg-input: #333333;
+  --bg-overlay: rgba(0, 0, 0, 0.9);
+  --bg-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #888888;
+  --text-inverse: #000000;
+
+  /* Accent Colors */
+  --accent-gold: #FFD700;
+  --accent-diamond: #B9F2FF;
+  --accent-green: #00FF88;
+  --accent-red: #FF3B3B;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 215, 0, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(255, 215, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(255, 215, 0, 0.15);
+  --shadow-lg: 0 8px 32px rgba(255, 215, 0, 0.2);
+  --shadow-glow: 0 0 20px rgba(255, 215, 0, 0.3);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Z-index */
+  --z-modal: 1000;
+  --z-overlay: 999;
+  --z-header: 100;
+  --z-nav: 90;
+  --z-fab: 80;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Blur */
+  --blur-sm: 8px;
+  --blur-md: 16px;
+  --blur-lg: 24px;
+}
+
+/* Diamond Theme */
+[data-theme="diamond"] {
+  --primary-color: #00D4FF;
+  --primary-dark: #0099CC;
+  --primary-light: #80EAFF;
+  --accent-color: #0099FF;
+
+  --bg-dark: #000810;
+  --bg-card: #001220;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+
+  /* Mobile Polish */
+  -webkit-user-select: none;
+  /* Safari */
+  user-select: none;
+  /* Standard */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior-y: none;
+  /* Prevent pull-to-refresh on mobile web */
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Page Layout Fixes */
+.profile-page,
+.store-page,
+.chats-page,
+.history-page,
+.streams-page,
+.games-page,
+.home-page {
+  padding-top: 100px !important;
+  /* Ensure content starts below nav */
+}
+
+/* Mobile-first responsive breakpoints */
+@media (min-width: 768px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-card);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Selection */
+::selection {
+  background: var(--primary-color);
+  color: var(--text-inverse);
+}
+
+/* Disable tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Button reset */
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Input reset */
+input,
+textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Link reset */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Platinum Theme Button Overrides */
+[data-theme="platinum"] button.btn-primary,
+[data-theme="platinum"] .action-btn,
+[data-theme="platinum"] .submit-btn {
+  background: linear-gradient(135deg, #FFFFFF 0%, #A0A0A0 100%) !important;
+  color: #000 !important;
+  box-shadow: 0 4px 15px rgba(229, 228, 226, 0.4) !important;
+  border: 1px solid #FFFFFF !important;
+}
+
+/* Gold Theme Button Overrides */
+[data-theme="default"] button.btn-primary,
+[data-theme="default"] .action-btn,
+[data-theme="default"] .submit-btn,
+[data-theme="gold"] button.btn-primary {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+  color: #000 !important;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3) !important;
+  border: 1px solid #FFE55C !important;
+}

@@ -1,0 +1,143 @@
+.payment-selector-modal {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.selector-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.selector-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 12px;
+}
+
+.selector-amount {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #00ff88, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.payment-method-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.payment-method-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.payment-method-btn.card-btn:hover {
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.payment-method-btn.crypto-btn:hover {
+    border-color: #F7931A;
+    box-shadow: 0 0 20px rgba(247, 147, 26, 0.3);
+}
+
+.method-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: rgba(0, 255, 136, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff88;
+    flex-shrink: 0;
+}
+
+.method-icon.crypto {
+    background: rgba(247, 147, 26, 0.1);
+    color: #F7931A;
+}
+
+.method-info {
+    flex: 1;
+}
+
+.method-info h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 4px;
+}
+
+.method-info p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 8px;
+}
+
+.method-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(0, 255, 136, 0.2);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #00ff88;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.method-badge.crypto {
+    background: rgba(247, 147, 26, 0.2);
+    border-color: rgba(247, 147, 26, 0.3);
+    color: #F7931A;
+}
+
+.method-arrow {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s;
+}
+
+.payment-method-btn:hover .method-arrow {
+    color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.selector-footer {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.selector-footer p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+}

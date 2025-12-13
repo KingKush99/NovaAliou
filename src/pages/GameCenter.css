@@ -1,0 +1,129 @@
+.game-center-page {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    padding-bottom: 70px;
+}
+
+.game-center-content {
+    padding: var(--spacing-lg);
+}
+
+.game-center-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.game-center-header h2 {
+    font-size: 24px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.game-center-header p {
+    color: var(--text-secondary);
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.game-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.game-thumbnail {
+    font-size: 64px;
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+}
+
+.game-info {
+    flex: 1;
+}
+
+.game-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.game-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.game-reward {
+    color: var(--accent-diamond);
+    font-weight: 600;
+}
+
+.game-plays {
+    color: var(--text-muted);
+}
+
+/* Daily Challenge */
+.daily-challenge {
+    background: var(--gradient-primary);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    text-align: center;
+    color: white;
+}
+
+.daily-challenge h3 {
+    font-size: 20px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.daily-challenge p {
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.9;
+}
+
+.challenge-progress {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.progress-bar {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+    height: 100%;
+    background: white;
+    border-radius: var(--radius-full);
+    transition: width var(--transition-slow);
+}
+
+.progress-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+}

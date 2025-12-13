@@ -1,0 +1,61 @@
+.notification-popup {
+    position: fixed;
+    bottom: 80px;
+    /* Above BottomNav */
+    left: 16px;
+    right: 16px;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid #444;
+    border-left: 4px solid #FFD700;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    color: #fff;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.notif-icon-col {
+    color: #FFD700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-text-col {
+    flex: 1;
+}
+
+.notif-text-col h4 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.notif-text-col p {
+    margin: 0;
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.4;
+}
+
+.notif-close {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+    border-radius: 4px;
+    display: flex;
+}
+
+.notif-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}

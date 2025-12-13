@@ -1,0 +1,226 @@
+.video-call-page {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+}
+
+.remote-video {
+    flex: 1;
+    position: relative;
+    background: #000;
+}
+
+.video-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+}
+
+.placeholder-avatar {
+    width: 200px;
+    height: 200px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+}
+
+.placeholder-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-avatar.small {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.connection-quality {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.quality-bar {
+    width: 4px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.quality-bar.good {
+    background: var(--accent-green);
+}
+
+.local-video {
+    position: absolute;
+    top: var(--spacing-xl);
+    left: var(--spacing-md);
+    width: 120px;
+    height: 160px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    z-index: 10;
+}
+
+.video-placeholder.small {
+    width: 100%;
+    height: 100%;
+}
+
+.call-info {
+    position: absolute;
+    top: var(--spacing-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.caller-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.call-duration {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.call-controls {
+    position: absolute;
+    bottom: var(--spacing-2xl);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    z-index: 10;
+    width: 100%;
+    justify-content: center;
+    padding: 0 10px;
+}
+
+@media (max-width: 480px) {
+    .call-controls {
+        gap: 8px;
+        bottom: 40px;
+        bottom: calc(40px + env(safe-area-inset-bottom));
+    }
+
+    .control-btn {
+        width: 44px;
+        /* Smaller buttons for mobile */
+        height: 44px;
+        min-width: 44px;
+        /* Prevent squishing */
+    }
+
+    .end-call-btn {
+        width: 52px;
+        height: 52px;
+    }
+}
+
+.control-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(var(--blur-md));
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.gift-btn {
+    background: var(--gradient-gold);
+}
+
+.gift-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.end-call-btn {
+    background: var(--accent-red);
+    width: 64px;
+    height: 64px;
+}
+
+.end-call-btn:hover {
+    background: #ff1a1a;
+    box-shadow: 0 0 20px rgba(255, 59, 59, 0.5);
+}
+
+.filters-panel {
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    width: 90%;
+    max-width: 400px;
+    z-index: 10;
+}
+
+.filters-panel h3 {
+    font-size: 16px;
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.filter-option {
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: 14px;
+}
+
+.filter-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-purple);
+}
+
+/* Safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .call-controls {
+        bottom: calc(var(--spacing-2xl) + env(safe-area-inset-bottom));
+    }
+}

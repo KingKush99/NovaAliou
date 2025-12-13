@@ -1,0 +1,71 @@
+.games-page {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    padding-top: 70px;
+    padding-bottom: 80px;
+}
+
+.games-grid {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+}
+
+.game-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.game-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: white;
+}
+
+.game-info h3 {
+    margin: 0 0 5px;
+    color: white;
+}
+
+.game-info p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.games-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.games-locked h2 {
+    color: white;
+    margin: 20px 0 10px;
+}
+
+.games-locked button {
+    margin-top: 20px;
+    background: var(--primary-color);
+    color: var(--text-inverse);
+    padding: 12px 24px;
+    border-radius: 20px;
+    font-weight: bold;
+}

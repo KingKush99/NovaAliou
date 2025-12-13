@@ -1,0 +1,29 @@
+/* Ad Banner Styles */
+.ad-banner-container {
+    width: 100%;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    min-height: 50px;
+    overflow: hidden;
+}
+
+/* Placeholder style when no ad is loaded */
+.ad-placeholder {
+    width: 320px;
+    height: 50px;
+    background-color: #f0f0f0;
+    border: 1px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.ad-hidden {
+    display: none;
+}

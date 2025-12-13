@@ -1,0 +1,241 @@
+.leaderboard-page {
+    min-height: 100vh;
+    background: var(--bg-dark);
+    padding-bottom: 80px;
+}
+
+.leaderboard-content {
+    padding-bottom: 80px;
+    /* Extra padding for fixed user rank */
+}
+
+/* Tabs */
+.leaderboard-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--surface-color);
+    position: sticky;
+    top: 60px;
+    z-index: 10;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    position: relative;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    color: white;
+}
+
+.tab-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+}
+
+/* Podium */
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background: linear-gradient(to bottom, var(--surface-color), transparent);
+}
+
+.podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100px;
+}
+
+.podium-avatar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.podium-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-full);
+    border: 3px solid var(--accent-color);
+    object-fit: cover;
+}
+
+.rank-1 .podium-avatar {
+    border-color: #FFD700;
+}
+
+.rank-2 .podium-avatar {
+    border-color: #C0C0C0;
+}
+
+.rank-3 .podium-avatar {
+    border-color: #CD7F32;
+}
+
+.podium-rank {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--bg-dark);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    border: 2px solid;
+}
+
+.rank-1 .podium-rank {
+    border-color: #FFD700;
+    color: #FFD700;
+}
+
+.rank-2 .podium-rank {
+    border-color: #C0C0C0;
+    color: #C0C0C0;
+}
+
+.rank-3 .podium-rank {
+    border-color: #CD7F32;
+    color: #CD7F32;
+}
+
+.crown-icon {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.podium-info {
+    text-align: center;
+}
+
+.podium-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+.podium-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* List */
+.leaderboard-list {
+    padding: 0 var(--spacing-md);
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.rank-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    width: 24px;
+    text-align: center;
+}
+
+.list-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+}
+
+.list-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.list-matches {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.list-score {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: #FFD700;
+}
+
+.coin-icon {
+    color: #FFD700;
+}
+
+/* Current User Fixed */
+.current-user-rank {
+    position: fixed;
+    bottom: 70px;
+    /* Above nav */
+    left: 0;
+    right: 0;
+    background: var(--surface-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.placeholder-avatar {
+    background: var(--gradient-primary);
+}

@@ -1,0 +1,36 @@
+.app-container {
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.app-container {
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* Page transitions */
+.page-enter {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+:root {
+    --primary-color: #FF4B8B;
+    --secondary-color: #2D2D44;
+    --accent-color: #FFD700;
+}
+
+.page-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.page-exit-active {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 300ms ease-in;
+}

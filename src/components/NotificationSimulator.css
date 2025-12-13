@@ -1,0 +1,39 @@
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+.notif-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.notif-content {
+    flex: 1;
+}
+
+.notif-title {
+    font-weight: bold;
+    color: #fff;
+    font-size: 14px;
+}
+
+.notif-body {
+    color: #ccc;
+    font-size: 12px;
+}

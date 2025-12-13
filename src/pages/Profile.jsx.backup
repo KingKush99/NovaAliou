@@ -1,0 +1,70 @@
+import { useParams, useNavigate } from 'react-router-dom';
+import { RiArrowLeftLine, RiUserAddLine, RiMessage3Line, RiMore2Fill } from 'react-icons/ri';
+import Header from '../components/Header';
+import BottomNav from '../components/BottomNav';
+import './Profile.css'; // Reuse Profile CSS
+
+export default function UserProfile() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    // Mock data based on ID (in a real app, fetch from API)
+    const user = {
+        id: id,
+        name: `User ${id}`,
+        displayName: `Display Name ${id}`,
+        age: 24,
+        bio: "This is a read-only profile view. I love streaming and meeting new people!",
+        photos: [`https://i.pravatar.cc/400?img=${(parseInt(id) || 0) + 10}`],
+        followers: 1250,
+        following: 450,
+        friends: 120
+    };
+
+    return (
+        <div className="profile-page">
+            <Header title={user.displayName} showBalance />
+
+            <div className="profile-content">
+                <div className="profile-header-card">
+                    <button className="back-btn" onClick={() => navigate(-1)} style={{ position: 'absolute', top: 15, left: 15, background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' }}>
+                        <RiArrowLeftLine />
+                    </button>
+
+                    <div className="profile-avatar-container">
+                        <img src={user.photos[0]} alt="Profile" className="profile-avatar-lg" />
+                    </div>
+                    <h2 className="profile-name">{user.displayName}, {user.age}</h2>
+                    <span className="profile-username">@{user.name}</span>
+                    <p className="profile-bio">{user.bio}</p>
+
+                    <div className="profile-stats-row">
+                        <div className="stat-item">
+                            <span className="stat-val">{user.followers}</span>
+                            <span className="stat-label">Followers</span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="stat-val">{user.following}</span>
+                            <span className="stat-label">Following</span>
+                        </div>
+                        <div className="stat-item">
+                            <span className="stat-val">{user.friends}</span>
+                            <span className="stat-label">Friends</span>
+                        </div>
+                    </div>
+
+                    <div className="profile-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+                        <button className="action-btn-primary" style={{ padding: '10px 20px', borderRadius: '20px', background: '#FFD700', color: 'black', border: 'none', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <RiUserAddLine /> Follow
+                        </button>
+                        <button className="action-btn-secondary" style={{ padding: '10px 20px', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <RiMessage3Line /> Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <BottomNav />
+        </div>
+    );
+}
