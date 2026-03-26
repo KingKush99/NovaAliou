@@ -32,6 +32,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: 10px;
 }
 
 .header-profile-btn {
@@ -125,42 +126,15 @@
     object-fit: cover;
 }
 
-.header-balance {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 6px 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s;
+.header-title {
+    max-width: 100%;
+    padding: 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.header-balance:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-}
-
-.coin-img {
-    width: 20px;
-    height: 20px;
-    animation: glow 2s infinite;
-}
-
-@keyframes glow {
-
-    0%,
-    100% {
-        filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
-    }
-
-    50% {
-        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
-    }
-}
-
-.header-balance span {
-    font-weight: 600;
-    color: #FFD700;
-    font-size: 14px;
-}
+/* header balance pill removed; coins should only be shown inside the hamburger/menu */

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
     RiUser3Line, RiNotification3Line, RiLockLine, RiQuestionLine,
     RiCustomerService2Line, RiLogoutBoxLine, RiDeleteBinLine,
-    RiArrowRightSLine, RiToggleLine, RiToggleFill
+    RiArrowRightSLine, RiToggleLine, RiToggleFill, RiPaletteLine
 } from 'react-icons/ri';
 import { useUserStore } from '../store/userStore';
 import Header from '../components/Header';
@@ -15,7 +15,7 @@ import './Settings.css';
 
 export default function Settings() {
     const navigate = useNavigate();
-    const { settings, updateSettings } = useUserStore();
+    const { settings, updateSettings, user, updateProfile, logout } = useUserStore();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showInputModal, setShowInputModal] = useState(false);
     const [inputModalType, setInputModalType] = useState(''); // 'email' or 'phone'
@@ -29,7 +29,12 @@ export default function Settings() {
     };
 
     const handleSaveInput = () => {
-        alert(`${inputModalType === 'email' ? 'Email' : 'Phone'} updated to: ${inputValue}`);
+        if (inputModalType === 'email') {
+            updateProfile({ email: inputValue });
+        } else {
+            updateProfile({ phone: inputValue });
+        }
+        alert(`${inputModalType === 'email' ? 'Email' : 'Phone'} updated successfully!`);
         setShowInputModal(false);
     };
 
@@ -40,43 +45,50 @@ export default function Settings() {
             items: [
                 { label: 'Edit Profile', action: () => navigate('/profile') },
                 { label: 'Email Verification', action: () => handleOpenInput('email') },
-                { label: 'Phone Number', action: () => handleOpenInput('phone') }
+                { label: 'Phone Number', action: () => handleOpenInput('phone') },
+                { label: 'Privacy Policy', action: () => navigate('/legal/privacy') },
+                { label: 'Terms of Service', action: () => navigate('/legal/terms') }
             ]
         },
         {
             title: 'Notifications',
             icon: <RiNotification3Line />,
-            // ... (omitted sections for brevity if possible, keeping context)
-            // Actually I cannot omit sections in replace_file_content without context validity.
-            // I will just replace the specific block if I can match it, or the larger block.
-            // The tool supports StartLine/EndLine, so I'll target the Account and Help sections separately if I can, but I can't do multiple items in one call with replace.
-            // Ah, multi_replace exists? No, I only have replace_file_content (single block) or multi_replace.
-            // I'll use separate calls or replace the whole sections list. But list is long.
-            // I'll use strict Targeting.
             items: [
                 {
-                    label: 'Matches',
+                    label: 'Friend Requests',
                     toggle: true,
-                    value: settings.notifications.matches,
-                    onChange: (val) => updateSettings('notifications', { matches: val })
+                    value: settings.notifications?.friendRequests ?? true,
+                    onChange: (val) => updateSettings('notifications', { friendRequests: val })
                 },
                 {
-                    label: 'Messages',
+                    label: 'Direct Messages',
                     toggle: true,
-                    value: settings.notifications.messages,
-                    onChange: (val) => updateSettings('notifications', { messages: val })
+                    value: settings.notifications?.directMessages ?? true,
+                    onChange: (val) => updateSettings('notifications', { directMessages: val })
                 },
                 {
-                    label: 'Likes',
+                    label: 'Push Notifications',
                     toggle: true,
-                    value: settings.notifications.likes,
-                    onChange: (val) => updateSettings('notifications', { likes: val })
+                    value: settings.notifications?.pushEnabled ?? true,
+                    onChange: (val) => updateSettings('notifications', { pushEnabled: val })
+                }
+            ]
+        },
+        {
+            title: 'Display',
+            icon: <RiPaletteLine />,
+            items: [
+                {
+                    label: 'Dark Mode',
+                    toggle: true,
+                    value: settings.display?.darkMode ?? true,
+                    onChange: (val) => updateSettings('display', { darkMode: val })
                 },
                 {
-                    label: 'Promotions',
+                    label: 'Blur NSFW Content',
                     toggle: true,
-                    value: settings.notifications.promotions,
-                    onChange: (val) => updateSettings('notifications', { promotions: val })
+                    value: settings.blurEffect ?? false,
+                    onChange: (val) => updateSettings('blurEffect', { value: val })
                 }
             ]
         },
@@ -87,23 +99,23 @@ export default function Settings() {
                 {
                     label: 'Show Online Status',
                     toggle: true,
-                    value: settings.privacy.showOnline,
+                    value: settings.privacy?.showOnline ?? true,
                     onChange: (val) => updateSettings('privacy', { showOnline: val })
                 },
                 {
                     label: 'Incognito Mode',
                     toggle: true,
-                    value: settings.privacy.incognito,
+                    value: settings.privacy?.incognito ?? false,
                     onChange: (val) => updateSettings('privacy', { incognito: val })
                 },
-                { label: 'Blocked Users', action: () => { } }
+                { label: 'Blocked Users', action: () => alert(`You have ${user.blockedUsers?.length || 0} blocked users.`) }
             ]
         },
         {
             title: 'Help & Support',
             icon: <RiCustomerService2Line />,
             items: [
-                { label: 'FAQ', icon: <RiQuestionLine />, action: () => alert('FAQ: \n1. How to earn coins? Watch ads!\n2. How to stream? Go to Profile.') },
+                { label: 'FAQs', icon: <RiQuestionLine />, action: () => alert('FAQ: \n1. How to earn coins? Watch ads!\n2. How to stream? Go to Profile.') },
                 { label: 'Contact Support', action: () => window.location.href = 'mailto:support@noveltycams.com' },
                 { label: 'Report Issue', action: () => alert('Report submitted successfully.') }
             ]
@@ -177,7 +189,12 @@ export default function Settings() {
                         <h3 className="section-title">Danger Zone</h3>
                     </div>
                     <div className="section-items">
-                        <div className="settings-item" onClick={() => { }}>
+                        <div className="settings-item" onClick={() => {
+                            if (window.confirm("Are you sure you want to logout?")) {
+                                logout();
+                                navigate('/');
+                            }
+                        }}>
                             <span className="item-label">
                                 <RiLogoutBoxLine /> Logout
                             </span>

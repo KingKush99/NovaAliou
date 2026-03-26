@@ -47,6 +47,30 @@ export default function Matches() {
                                 <div className="match-info">
                                     <h3 className="match-name">{match.name}</h3>
                                     <p className="match-age">{match.age}</p>
+                                    <div className="match-compliance-actions">
+                                        <button
+                                            className="compliance-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (window.confirm(`Block ${match.name}?`)) {
+                                                    alert(`${match.name} has been blocked.`);
+                                                }
+                                            }}
+                                        >
+                                            🚫 Block
+                                        </button>
+                                        <button
+                                            className="compliance-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (window.confirm(`Report ${match.name} for inappropriate behavior?`)) {
+                                                    alert(`${match.name} has been reported.`);
+                                                }
+                                            }}
+                                        >
+                                            🚩 Report
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}

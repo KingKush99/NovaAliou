@@ -23,14 +23,16 @@
     justify-content: center;
     flex: 1;
     height: 100%;
-    color: var(--text-secondary);
-    transition: color var(--transition-base);
+    color: var(--primary-color);
+    opacity: 0.5;
+    transition: all var(--transition-base);
     text-decoration: none;
     min-width: 0;
 }
 
 .nav-item.active {
     color: var(--primary-color);
+    opacity: 1;
 }
 
 .nav-icon {

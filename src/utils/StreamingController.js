@@ -108,15 +108,33 @@ class StreamingController {
         return remoteStream;
     }
 
-    sendMessage(streamId, message, sender) {
+    sendMessage(streamId, message, sender, color, senderId) {
         if (this.socket) {
-            this.socket.emit('stream-message', { streamId, message, sender });
+            this.socket.emit('stream-message', { streamId, message, sender, color, senderId });
         }
     }
 
     onMessage(callback) {
         if (this.socket) {
             this.socket.on('stream-message', callback);
+        }
+    }
+
+    sendGift(streamId, giftName, coinCost, senderName) {
+        if (this.socket) {
+            this.socket.emit('send-gift', { streamId, giftName, coinCost, senderName });
+        }
+    }
+
+    onGift(callback) {
+        if (this.socket) {
+            this.socket.on('gift-received', callback);
+        }
+    }
+
+    onPayout(callback) {
+        if (this.socket) {
+            this.socket.on('payout-update', callback);
         }
     }
 

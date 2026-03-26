@@ -1,0 +1,77 @@
+﻿[dotenv@17.2.3] injecting env (1) from .env -- tip: ≡ƒöÉ prevent building .env in docker: https://dotenvx.com/prebuild
+node : M:\NoveltyCams
+\node_modules\stripe\
+cjs\stripe.core.js:15
+8
+At line:1 char:1
++ node server.cjs 
+2>&1 | Out-File 
+-FilePath 
+"server_error.txt" 
+-Encodin ...
++ 
+~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (M:\Nove   
+ ltyCams\...ipe.c    
+ore.js:158:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+                
+throw new 
+Error('Neither 
+apiKey nor 
+config.authenticator 
+provided');
+                ^
+
+Error: Neither 
+apiKey nor 
+config.authenticator 
+provided
+    at Stripe._setAut
+henticator (M:\Novelt
+yCams\node_modules\st
+ripe\cjs\stripe.core.
+js:158:23)
+    at new Stripe (M:
+\NoveltyCams\node_mod
+ules\stripe\cjs\strip
+e.core.js:96:14)
+    at Stripe (M:\Nov
+eltyCams\node_modules
+\stripe\cjs\stripe.co
+re.js:52:20)
+    at 
+Object.<anonymous> (M
+:\NoveltyCams\server.
+cjs:10:33)
+    at 
+Module._compile (node
+:internal/modules/cjs
+/loader:1358:14)
+    at Module._extens
+ions..js (node:intern
+al/modules/cjs/loader
+:1416:10)
+    at Module.load (n
+ode:internal/modules/
+cjs/loader:1208:32)
+    at Module._load (
+node:internal/modules
+/cjs/loader:1024:12)
+    at Function.execu
+teUserEntryPoint [as 
+runMain] (node:intern
+al/modules/run_main:1
+74:12)
+    at node:internal/
+main/run_main_module:
+28:49
+
+Node.js v20.13.1

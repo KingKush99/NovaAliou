@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiSettings4Line, RiVipCrownFill, RiCheckboxCircleFill, RiTimerLine } from 'react-icons/ri';
+import { RiVipCrownFill, RiCheckboxCircleFill, RiTimerLine } from 'react-icons/ri';
 import { useMatchStore } from '../store/matchStore';
 import { useUserStore } from '../store/userStore';
 import { useChatStore } from '../store/chatStore';
@@ -16,7 +16,7 @@ import './Home.css';
 export default function Home() {
     const navigate = useNavigate();
     const { profiles, currentProfileIndex, setProfiles, likeProfile, passProfile } = useMatchStore();
-    const { spendDiamonds, addCoins } = useUserStore(); // Destructure addCoins
+    const { addCoins } = useUserStore();
     const { initializeConversation } = useChatStore();
     const [timeLeft, setTimeLeft] = useState(10);
 
@@ -41,26 +41,35 @@ export default function Home() {
 
     useEffect(() => {
         if (!currentProfile) return;
-
         const timer = setInterval(() => {
             setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
         }, 1000);
-
         return () => clearInterval(timer);
     }, [currentProfile]);
 
     const handleAccept = () => {
         if (!currentProfile) return;
-
         likeProfile(currentProfile.id);
         initializeConversation(currentProfile.id, currentProfile);
-        // Navigate to video call directly - charging happens in VideoCall.jsx (10 coins/sec)
         navigate(`/call/${currentProfile.id}`);
     };
 
     const handleSkip = () => {
         if (!currentProfile) return;
         passProfile(currentProfile.id);
+    };
+
+    const handleWatchAd = async () => {
+        try {
+            const { AdMobController } = await import('../utils/AdMobController');
+            const earned = await AdMobController.showRewardVideo();
+            if (earned) {
+                addCoins(15);
+                alert("Thanks for watching! +15 Coins");
+            }
+        } catch (error) {
+            console.error("Ad failed", error);
+        }
     };
 
     if (!currentProfile) {
@@ -77,34 +86,10 @@ export default function Home() {
         );
     }
 
-    const handleWatchAd = async () => {
-        try {
-            // Dynamically import AdMobController to avoid web build errors if not mocked
-            const { AdMobController } = await import('../utils/AdMobController');
-            const earned = await AdMobController.showRewardVideo();
-
-            if (earned) {
-                // Reward: 15 Coins (Calculated: $0.02 rev/view = 30 coins. 50% share = 15 coins)
-                addCoins(15);
-                alert("Thanks for watching! +15 Coins");
-            } else {
-                // Optional: alert("You closed the ad too early!");
-            }
-        } catch (error) {
-            console.error("Ad failed", error);
-            alert("No ad available right now.");
-        }
-    };
-
     return (
         <div className="home-page">
-            <Header
-                title="NoveltyCams"
-                showBalance
-            // rightAction removed to allow default HamburgerMenu
-            />
+            <Header title="NoveltyCams" showBalance />
 
-            {/* Ad Banner Moved to Top */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 10, padding: 10 }}>
                 <AdBanner position="top" />
                 <button onClick={handleWatchAd} style={{ background: '#FFD700', border: 'none', borderRadius: 4, padding: '5px 10px', fontWeight: 'bold' }}>
@@ -124,13 +109,8 @@ export default function Home() {
                             transition={{ duration: 0.3 }}
                         >
                             <div className="card-image-container">
-                                <img
-                                    src={currentProfile.photos[0]}
-                                    alt={currentProfile.name}
-                                    className="card-image"
-                                />
+                                <img src={currentProfile.photos[0]} alt={currentProfile.name} className="card-image" />
                                 <div className="card-overlay" />
-
                                 <div className="card-badges">
                                     {currentProfile.isPopular && (
                                         <div className="badge popular-badge">
@@ -144,12 +124,9 @@ export default function Home() {
                                         </div>
                                     )}
                                 </div>
-
                                 <div className="card-info">
                                     <div className="card-header">
-                                        <h2 className="card-name">
-                                            {currentProfile.name}, {currentProfile.age}
-                                        </h2>
+                                        <h2 className="card-name">{currentProfile.name}, {currentProfile.age}</h2>
                                         <p className="card-distance">{formatDistance(currentProfile.distance)}</p>
                                     </div>
                                     <p className="card-bio">{currentProfile.bio}</p>
@@ -167,20 +144,8 @@ export default function Home() {
                     </div>
 
                     <div className="match-actions">
-                        <Button
-                            variant="secondary"
-                            className="skip-btn"
-                            onClick={handleSkip}
-                        >
-                            SKIP
-                        </Button>
-                        <Button
-                            variant="primary"
-                            className="accept-btn"
-                            onClick={handleAccept}
-                        >
-                            ACCEPT VIDEO
-                        </Button>
+                        <Button variant="secondary" className="skip-btn" onClick={handleSkip}>SKIP</Button>
+                        <Button variant="primary" className="accept-btn" onClick={handleAccept}>ACCEPT VIDEO</Button>
                     </div>
                 </div>
             </div>
@@ -189,3 +154,4 @@ export default function Home() {
         </div>
     );
 }
+

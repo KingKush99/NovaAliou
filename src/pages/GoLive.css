@@ -20,26 +20,50 @@
 
 .preview-overlay {
     position: absolute;
-    top: 20px;
+    top: 80px;
+    /* Clear the 60px fixed header */
     left: 20px;
     right: 20px;
-    z-index: 10;
+    z-index: 200;
+    /* Higher than header's 100 */
+}
+
+.title-input-card {
+    background: #000;
+    border: 2px solid #FF4B8B;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 75, 139, 0.2);
+}
+
+.input-label {
+    display: block;
+    color: #FF4B8B;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
 }
 
 .stream-title-input {
     width: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #111;
+    border: 1px solid #333;
     color: #fff;
-    padding: 15px;
+    padding: 12px 15px;
     font-size: 18px;
-    border-radius: 12px;
+    border-radius: 8px;
     outline: none;
-    backdrop-filter: blur(5px);
+    transition: border-color 0.3s;
+}
+
+.stream-title-input:focus {
+    border-color: #FF4B8B;
 }
 
 .stream-title-input::placeholder {
-    color: #aaa;
+    color: #555;
 }
 
 .camera-controls {
@@ -69,4 +93,36 @@
 .go-live-footer {
     padding: 20px;
     background: #000;
+}
+
+.camera-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #ff6b6b;
+    text-align: center;
+    padding: 30px;
+}
+
+.camera-error p {
+    margin: 20px 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.camera-error button {
+    background: #ff6b6b;
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.camera-error button:hover {
+    background: #ff5252;
 }

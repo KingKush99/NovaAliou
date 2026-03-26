@@ -16,7 +16,19 @@ export default function VideoCall() {
     const [isMuted, setIsMuted] = useState(false);
     const [isCameraOff, setIsCameraOff] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
+    const [activeFilter, setActiveFilter] = useState('None');
     const [isMultiHost, setIsMultiHost] = useState(false); // For future multi-host feature
+
+    const getFilterStyle = (filter) => {
+        switch (filter) {
+            case 'Natural': return 'contrast(1.1) saturate(1.1)';
+            case 'Smooth': return 'blur(0.5px) brightness(1.1)';
+            case 'Bright': return 'brightness(1.2) contrast(1.1)';
+            case 'Warm': return 'sepia(0.2) saturate(1.2)';
+            case 'Cool': return 'hue-rotate(180deg) opacity(0.9)'; // Just for effect
+            default: return 'none';
+        }
+    };
 
     // Coin charging: 
     // Single Model: 250 coins/min = ~4.16 coins/sec
@@ -69,7 +81,7 @@ export default function VideoCall() {
 
             {/* Local Video (Picture in Picture) */}
             <div className="local-video">
-                <div className="video-placeholder small">
+                <div className="video-placeholder small" style={{ filter: getFilterStyle(activeFilter) }}>
                     <div className="placeholder-avatar small">
                         <img src="https://i.pravatar.cc/400?img=1" alt="You" />
                     </div>
@@ -143,7 +155,11 @@ export default function VideoCall() {
                     <h3>Beauty Filters</h3>
                     <div className="filters-grid">
                         {['None', 'Natural', 'Smooth', 'Bright', 'Warm', 'Cool'].map((filter) => (
-                            <button key={filter} className="filter-option">
+                            <button
+                                key={filter}
+                                className={`filter-option ${activeFilter === filter ? 'active' : ''}`}
+                                onClick={() => setActiveFilter(filter)}
+                            >
                                 {filter}
                             </button>
                         ))}

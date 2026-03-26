@@ -2,6 +2,7 @@
 // Handles Google AdMob integration for NoveltyCams
 
 const ADMOB_PUBLISHER_ID = import.meta.env.VITE_ADMOB_PUBLISHER_ID || 'pub-4860697858864944';
+import { useSubscriptionStore, TIERS } from '../store/useSubscriptionStore';
 
 class AdService {
     constructor() {
@@ -12,6 +13,12 @@ class AdService {
 
     init() {
         if (this.initialized) return;
+
+        const { tier } = useSubscriptionStore.getState();
+        if (tier !== TIERS.FREE) {
+            console.log('AdService: Paid tier detected, skipping ad initialization.');
+            return;
+        }
 
         console.log('AdService: Initializing AdMob with ID', ADMOB_PUBLISHER_ID);
 

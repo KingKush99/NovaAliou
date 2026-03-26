@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { RiCloseLine, RiArrowUpSLine, RiRefreshLine } from 'react-icons/ri';
+import { RiCloseLine, RiArrowUpSLine, RiRefreshLine, RiCoinFill } from 'react-icons/ri';
 import { useUserStore } from '../store/userStore';
 import './MiniSlots.css';
 
@@ -99,6 +99,11 @@ export default function MiniSlots({ onClose }) {
                 </button>
 
                 <h3 className="slots-title">Mini Slots</h3>
+
+                <div className="slots-balance">
+                    <RiCoinFill />
+                    <span>{coins} Coins</span>
+                </div>
 
                 <div className="slots-machine">
                     <div className="reels-window">

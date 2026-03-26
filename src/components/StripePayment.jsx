@@ -10,7 +10,7 @@ import './StripePayment.css';
 // Use environment variable or mock key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_mock');
 
-const CheckoutForm = ({ onSuccess, onClose }) => {
+const CheckoutForm = ({ amount, onSuccess, onClose }) => {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState(null);
@@ -30,7 +30,8 @@ const CheckoutForm = ({ onSuccess, onClose }) => {
             const response = await fetch(`${apiUrl}/create-payment-intent`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: 1250, currency: 'usd' }) // Example amount, should be prop
+                // API expects amount in dollars; server converts to cents for Stripe.
+                body: JSON.stringify({ amount, currency: 'usd' })
             });
 
             if (!response.ok) throw new Error('Failed to start payment');
@@ -103,7 +104,7 @@ const CheckoutForm = ({ onSuccess, onClose }) => {
     );
 };
 
-export default function StripePayment({ onClose, onSuccess }) {
+export default function StripePayment({ amount, onClose, onSuccess }) {
     return (
         <div className="stripe-modal-overlay">
             <motion.div
@@ -118,7 +119,7 @@ export default function StripePayment({ onClose, onSuccess }) {
                 </div>
                 <div className="stripe-body">
                     <Elements stripe={stripePromise}>
-                        <CheckoutForm onSuccess={onSuccess} onClose={onClose} />
+                        <CheckoutForm amount={amount} onSuccess={onSuccess} onClose={onClose} />
                     </Elements>
                 </div>
             </motion.div>

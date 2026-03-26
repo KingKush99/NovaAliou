@@ -1,74 +1,187 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiCloseLine, RiHeart3Fill, RiSendPlaneFill, RiGiftFill, RiUser3Fill, RiCoinFill, RiMicLine, RiMicOffLine } from 'react-icons/ri';
 import { useUserStore } from '../store/userStore';
+import { streamingController } from '../utils/StreamingController';
 import './StreamRoom.css';
 
-const MOCK_COMMENTS = [
-    { id: 1, user: 'User1', text: 'Wow amazing!', color: '#FF6B6B' },
-    { id: 2, user: 'User2', text: 'Love this stream ❤️', color: '#4ECDC4' },
-    { id: 3, user: 'User3', text: 'Hello from Brazil 🇧🇷', color: '#FFE66D' },
+const getOppositeColor = (hex) => {
+    if (!hex || hex.toLowerCase() === '#ffffff' || hex.toLowerCase() === '#fff') return '#ffffff';
+    try {
+        const r = (255 - parseInt(hex.slice(1, 3), 16)).toString(16).padStart(2, '0');
+        const g = (255 - parseInt(hex.slice(3, 5), 16)).toString(16).padStart(2, '0');
+        const b = (255 - parseInt(hex.slice(5, 7), 16)).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`;
+    } catch (e) { return '#ffffff'; }
+};
+
+const AI_BOTS = [
+    { name: 'DirtyDiego', color: '#FF4500', messages: ['¡Qué curvas! Me pones a mil... 🔥', '¿Quieres ver algo especial? 😉', 'Eres la más sexy de aquí.', 'Mmm, me encanta lo que veo...'] },
+    { name: 'AmourLuc', color: '#FF1493', messages: ['Miam, t\'es tellement sexy... 🫦', 'Je veux te voir plus, mon amour.', 'Tu me rends fou avec ton corps.', 'Une déesse absolue...'] },
+    { name: 'HardyHank', color: '#32CD32', messages: ['I want to see everything... 👅', 'You make me so hard right now.', 'Can I tip for a private show?', 'Best body on this whole site.'] },
+    { name: 'SafiraHot', color: '#9370DB', messages: ['Você é maravilhosa... que delícia! 🇧🇷', 'Quero te dar muitos diamantes hoje.', 'Vem ni mim, gata!', 'Olha esse corpo, meu deus...'] }
 ];
 
 export default function StreamRoom() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { coins, deductCoins } = useUserStore();
-    const [comments, setComments] = useState(MOCK_COMMENTS);
+    const { user, coins, deductCoins, addDiamonds } = useUserStore(); // Added addDiamonds
+    const [comments, setComments] = useState([]);
     const [input, setInput] = useState('');
     const [showGiftAnim, setShowGiftAnim] = useState(false);
     const [likes, setLikes] = useState(12450);
     const [isSpeaker, setIsSpeaker] = useState(false);
-    const [showSpeakerModal, setShowSpeakerModal] = useState(false);
+    const [isReported, setIsReported] = useState(false);
 
-    // Determine if this is a multi-host stream (based on ID or stream data)
-    const isMultiHostStream = id && id.includes('multi'); // Simple check, adjust as needed
-    const SPEAKER_COST_PER_SECOND = 20; // Coins per second for speaker role
+    // Host Logic: Check if ID contains user info OR if query param says so OR session token matches
+    const isHost = (id && user && (
+        (user.id && String(id).includes(String(user.id))) ||
+        (user.username && String(id).includes(String(user.username)))
+    )) ||
+        new URLSearchParams(window.location.search).get('host') === 'true' ||
+        sessionStorage.getItem('isStreamer') === id;
 
-    // Speaker coin deduction (20 coins/second when speaker)
-    useEffect(() => {
-        if (isSpeaker) {
-            const interval = setInterval(() => {
-                const success = deductCoins(SPEAKER_COST_PER_SECOND);
-                if (!success) {
-                    alert("Out of coins! Speaker role ended.");
-                    setIsSpeaker(false);
-                }
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [isSpeaker, deductCoins]);
+    // Assign a consistent random color (or white for host)
+    const [myChatColor] = useState(() => {
+        if (isHost) return '#FFFFFF';
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#A29BFE', '#FF4500', '#FF1493'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    });
 
-    // NO automatic coin deduction - joining is FREE!
+    // Video Refs
+    const videoRef = useRef(null);
+    const chatEndRef = useRef(null);
 
-    // Mock incoming comments
+    // AI Chat simulation
     useEffect(() => {
         const interval = setInterval(() => {
-            const newComment = {
-                id: Date.now(),
-                user: `User${Math.floor(Math.random() * 1000)}`,
-                text: ['So cool!', 'Beautiful 😍', 'Hi!', 'Nice stream'][Math.floor(Math.random() * 4)],
-                color: ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43'][Math.floor(Math.random() * 4)]
-            };
-            setComments(prev => [...prev.slice(-4), newComment]);
-        }, 2000);
+            const bot = AI_BOTS[Math.floor(Math.random() * AI_BOTS.length)];
+            const text = bot.messages[Math.floor(Math.random() * bot.messages.length)];
+
+            setComments(prev => [...prev.slice(-15), {
+                id: `ai-${Date.now()}`,
+                user: bot.name,
+                text: text,
+                color: bot.color,
+                isAI: true
+            }]);
+        }, Math.random() * 10000 + 5000); // 5-15 seconds
+
         return () => clearInterval(interval);
     }, []);
 
+    // Auto-scroll chat
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [comments]);
+
+    useEffect(() => {
+        const setupStream = async () => {
+            try {
+                let stream;
+                if (isHost) {
+                    console.log("Starting stream as Host...");
+                    stream = await streamingController.startStream(id, user.displayName || user.username);
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream;
+                        videoRef.current.muted = true; // Mute self
+                    }
+                } else {
+                    console.log("Joining stream as Viewer...");
+                    stream = await streamingController.joinStream(id, user.id);
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream;
+                    }
+                }
+            } catch (err) {
+                console.error("Streaming setup failed:", err);
+                // Fallback to mock if server is down? No, user wants REAL.
+            }
+        };
+
+        setupStream();
+
+        // Listeners
+        streamingController.onGift((data) => {
+            setComments(prev => [...prev.slice(-4), {
+                id: Date.now(),
+                user: 'System',
+                text: `${data.senderName} sent ${data.giftName}! 🎁`,
+                color: '#FFD700'
+            }]);
+            setShowGiftAnim(true);
+            setTimeout(() => setShowGiftAnim(false), 2000);
+        });
+
+        // Payout Listener (Only for Host)
+        if (isHost) {
+            streamingController.onPayout((data) => {
+                console.log(`💰 Paid ${data.amount} diamonds from ${data.from}`);
+                addDiamonds(data.amount);
+            });
+        }
+
+        // Chat Listener
+        streamingController.onMessage((data) => {
+            const botColors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF9F43', '#A29BFE'];
+            const randomColor = botColors[Math.floor(Math.random() * botColors.length)];
+
+            setComments(prev => [...prev.slice(-15), {
+                id: data.id || Date.now(),
+                user: data.sender,
+                text: data.text,
+                color: data.color || randomColor,
+                senderId: data.senderId
+            }]);
+        });
+
+        return () => {
+            if (isHost) {
+                streamingController.endStream(id);
+            }
+            // Viewers just disconnect socket via controller logic or refresh
+            // streamingController.disconnect(); // Not exposed yet, maybe needed?
+        };
+    }, [id, isHost, user, addDiamonds]);
+
     const handleSend = () => {
-        if (!input.trim()) return;
-        setComments(prev => [...prev.slice(-4), { id: Date.now(), user: 'Me', text: input, color: '#fff' }]);
+        if (!input.trim() || !user) return;
+        const messageText = input;
+
+        // Host always speaks in pure white
+        const displayColor = isHost ? '#FFFFFF' : myChatColor;
+
+        // Local Echo: Add message to UI immediately
+        setComments(prev => [...prev.slice(-15), {
+            id: `me-${Date.now()}`,
+            user: user.displayName || user.username || 'Me',
+            text: messageText,
+            color: displayColor,
+            senderId: user.id,
+            isLocal: true // Help identify local messages
+        }]);
+
+        // Send via Socket
+        streamingController.sendMessage(id, messageText, user.displayName || user.username, displayColor, user.id);
         setInput('');
     };
 
     const handleGift = () => {
         const GIFT_COST = 50;
+        const GIFT_NAME = "Heart";
+
         if (coins >= GIFT_COST) {
-            deductCoins(GIFT_COST);
-            setShowGiftAnim(true);
-            setTimeout(() => setShowGiftAnim(false), 2000);
-            setComments(prev => [...prev.slice(-4), { id: Date.now(), user: 'System', text: 'Sent a Gift! 🎁', color: '#FFD700' }]);
+            const success = deductCoins(GIFT_COST);
+            if (success) {
+                // Send via Socket
+                streamingController.sendGift(id, GIFT_NAME, GIFT_COST, user.displayName || 'User');
+
+                // Local Feedback
+                setShowGiftAnim(true);
+                setTimeout(() => setShowGiftAnim(false), 2000);
+                setComments(prev => [...prev.slice(-4), { id: Date.now(), user: 'Me', text: `Sent a ${GIFT_NAME}! 🎁`, color: '#FFD700' }]);
+            }
         } else {
             alert(`Not enough coins! Gifts cost ${GIFT_COST} coins.`);
         }
@@ -76,65 +189,34 @@ export default function StreamRoom() {
 
     const handleLike = () => {
         setLikes(prev => prev + 1);
-        // Add visual heart animation logic here if desired
-    };
-
-    const handleBecomeSpeaker = () => {
-        // Check if user has enough for at least a few seconds
-        if (coins >= SPEAKER_COST_PER_SECOND * 5) {
-            setIsSpeaker(true);
-            setShowSpeakerModal(false);
-            alert('You are now a speaker! 🎤 (20 coins/second)');
-        } else {
-            alert(`You need at least ${SPEAKER_COST_PER_SECOND * 5} coins to become a speaker. You have ${coins} coins.`);
-        }
     };
 
     return (
         <div className="stream-room">
-            {/* Video Background (Mock) */}
+            {/* Real Video Player */}
             <div className="stream-video-container">
-                <div className="main-host-video">
-                    <img src="https://i.pravatar.cc/400?img=10" alt="Main Host" />
-                    <div className="host-label">HOST</div>
-                </div>
-                <div className="guest-grid">
-                    {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="guest-video">
-                            <img src={`https://i.pravatar.cc/300?img=${20 + i}`} alt={`Guest ${i}`} />
-                        </div>
-                    ))}
-                </div>
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="main-host-video-element"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+
+                {/* Host Badge */}
+                <div className="host-label">LIVE</div>
             </div>
 
             {/* Overlay UI */}
             <div className="stream-overlay-ui">
                 <div className="stream-header">
                     <div className="host-profile">
-                        <img src="https://i.pravatar.cc/150?img=10" alt="Host" />
                         <div className="host-info">
-                            <h4>Host & Friends</h4>
-                            <span className="viewer-count"><RiUser3Fill /> 5.2k</span>
-                            {isMultiHostStream && (
-                                <span className="stream-type-badge">Multi-Host</span>
-                            )}
+                            <h4>{isHost ? 'You are Live' : 'Live Stream'}</h4>
+                            <span className="viewer-count"><RiUser3Fill /> {isHost ? 'Broadcasting' : 'Watching'}</span>
                         </div>
                     </div>
                     <div className="stream-controls-top">
-                        {isMultiHostStream && !isSpeaker && (
-                            <button
-                                className="speaker-upgrade-btn"
-                                onClick={() => setShowSpeakerModal(true)}
-                                title={`Become a speaker for ${SPEAKER_COST_PER_SECOND} coins/second`}
-                            >
-                                <RiMicOffLine /> Become Speaker
-                            </button>
-                        )}
-                        {isSpeaker && (
-                            <div className="speaker-badge">
-                                <RiMicLine /> Speaker
-                            </div>
-                        )}
                         <div className="coin-display">
                             <RiCoinFill className="coin-icon-spin" />
                             <span>{coins}</span>
@@ -147,19 +229,31 @@ export default function StreamRoom() {
 
                 <div className="stream-footer">
                     <div className="comments-area">
-                        <AnimatePresence>
-                            {comments.map(comment => (
-                                <motion.div
-                                    key={comment.id}
-                                    className="comment-item"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                >
-                                    <span style={{ color: comment.color }}>{comment.user}: </span>
-                                    {comment.text}
-                                </motion.div>
-                            ))}
+                        <AnimatePresence initial={false}>
+                            {comments.map(comment => {
+                                const isCommentHost = (id && (
+                                    (comment.senderId && String(id).includes(String(comment.senderId))) ||
+                                    (comment.user && String(id).includes(String(comment.user)))
+                                )) || (isHost && comment.isLocal);
+
+                                return (
+                                    <motion.div
+                                        key={comment.id}
+                                        className="comment-item"
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                    >
+                                        <div className="comment-bubble">
+                                            {isCommentHost && <span className="chat-badge host-badge">HOST</span>}
+                                            <span className="comment-user" style={{ color: isCommentHost ? '#FFFFFF' : comment.color }}>
+                                                {comment.user}
+                                            </span>
+                                            <span className="comment-text" style={{ color: isCommentHost ? '#FFFFFF' : getOppositeColor(comment.color) }}>: {comment.text}</span>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                            <div ref={chatEndRef} />
                         </AnimatePresence>
                     </div>
 
@@ -176,41 +270,41 @@ export default function StreamRoom() {
                                 <RiSendPlaneFill />
                             </button>
                         </div>
-                        <button className="action-btn gift-btn" onClick={handleGift}>
+                        <button className="action-btn gift-btn" onClick={handleGift} disabled={isHost}>
                             <RiGiftFill />
                         </button>
                         <button className="action-btn like-btn" onClick={handleLike}>
-                            <RiHeart3Fill />
-                            <span className="like-count">{likes}</span>
+                            <div className="viewers-count">
+                                <RiUser3Fill /> {likes.toLocaleString()}
+                            </div>
+                        </button>
+                        <button
+                            className={`report-stream-btn ${isReported ? 'reported' : ''}`}
+                            onClick={() => {
+                                if (window.confirm("Report this stream for inappropriate content?")) {
+                                    setIsReported(true);
+                                    alert("Stream reported. Our moderators will review it shortly.");
+                                }
+                            }}
+                            disabled={isReported}
+                        >
+                            🚩 {isReported ? 'Reported' : 'Report'}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* Speaker Upgrade Modal */}
-            {showSpeakerModal && (
-                <div className="speaker-modal-overlay" onClick={() => setShowSpeakerModal(false)}>
-                    <div className="speaker-modal" onClick={(e) => e.stopPropagation()}>
-                        <h3>Become a Speaker</h3>
-                        <div className="speaker-modal-icon">🎤</div>
-                        <p>Upgrade to speaker role to participate in the conversation!</p>
-                        <div className="speaker-cost">
-                            <RiCoinFill /> {SPEAKER_COST_PER_SECOND} Coins/Second
-                        </div>
-                        <p className="speaker-note">You have {coins} coins (need at least {SPEAKER_COST_PER_SECOND * 5} to start)</p>
-                        <div className="speaker-modal-actions">
-                            <button className="modal-btn cancel-btn" onClick={() => setShowSpeakerModal(false)}>
-                                Cancel
-                            </button>
-                            <button
-                                className="modal-btn confirm-btn"
-                                onClick={handleBecomeSpeaker}
-                                disabled={coins < SPEAKER_COST_PER_SECOND * 5}
-                            >
-                                Upgrade
-                            </button>
-                        </div>
-                    </div>
+            {/* Gift Animation */}
+            {showGiftAnim && (
+                <div className="gift-animation-overlay">
+                    <motion.div
+                        initial={{ scale: 0, y: 100 }}
+                        animate={{ scale: 1.5, y: -200, opacity: 0 }}
+                        transition={{ duration: 1.5 }}
+                        style={{ fontSize: '100px' }}
+                    >
+                        🎁
+                    </motion.div>
                 </div>
             )}
         </div>

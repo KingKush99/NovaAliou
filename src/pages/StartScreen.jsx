@@ -13,9 +13,10 @@ function StartScreen() {
     useEffect(() => {
         // Check local storage directly for robustness
         const localOnboarded = localStorage.getItem('hasOnboarded');
-        if (hasCompletedOnboarding || localOnboarded === 'true') {
-            navigate('/home', { replace: true });
-        }
+        // DISABLED FOR TESTING: Force Start Screen -> Onboarding
+        // if (hasCompletedOnboarding || localOnboarded === 'true') {
+        //     navigate('/home', { replace: true });
+        // }
         setIsLoaded(true);
     }, [hasCompletedOnboarding, navigate]);
 

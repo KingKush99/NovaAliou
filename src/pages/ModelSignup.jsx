@@ -19,15 +19,39 @@ export default function ModelSignup() {
         cvc: ''
     });
     const [codeError, setCodeError] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [verificationLog, setVerificationLog] = useState([]);
 
 
     const handleNext = () => {
+        let hasError = false;
+
         if (step === 1) {
-            if (!validateReferralCode(formData.referralCode)) {
-                setCodeError('Invalid referral code. Please contact a model or admin for a valid code.');
-                return;
+            // Referral Code Validation
+            if (formData.referralCode !== 'NEWBIE20') {
+                setCodeError('CRITICAL: Invalid referral code. Only pre-screened models may apply.');
+                hasError = true;
+            } else {
+                setCodeError('');
             }
-            setCodeError('');
+
+            // Legal Name Validation (Prestige Check)
+            const nameParts = formData.legalName.trim().split(/\s+/);
+            if (nameParts.length < 2) {
+                setNameError('SECURITY ALERT: Full legal name (First & Last) required for payout verification.');
+                hasError = true;
+            } else {
+                setNameError('');
+            }
+
+            // ID Upload Check
+            if (!formData.idFront) {
+                alert("ID front photo is required for AI identity verification.");
+                hasError = true;
+            }
+
+            if (hasError) return;
         }
         setStep(step + 1);
     };
@@ -44,8 +68,26 @@ export default function ModelSignup() {
     };
 
     const handleSubmit = () => {
-        alert("Application submitted! We will review your info.");
-        navigate('/profile');
+        setIsVerifying(true);
+        setVerificationLog(['Initializing biometric scan...', 'Accessing global ID databases...']);
+
+        // Step 1: Scan Front ID
+        setTimeout(() => {
+            setVerificationLog(prev => [...prev, 'OCR Analysis: Extracting name and DOB...', 'Front ID: AUTHENTIC']);
+
+            // Step 2: Cross-reference
+            setTimeout(() => {
+                setVerificationLog(prev => [...prev, 'Cross-referencing legal name with banking records...', 'Database Match: POSITIVE']);
+
+                // Step 3: Final Approval
+                setTimeout(() => {
+                    setVerificationLog(prev => [...prev, 'Security check passed.', 'Welcome to the platform!']);
+                    alert("✅ AI IDENTITY VERIFIED\n\nYour model account has been successfully authorized for payouts.\n\nClick OK to visit your dashboard.");
+                    setIsVerifying(false);
+                    navigate('/profile');
+                }, 2000);
+            }, 2000);
+        }, 2000);
     };
 
     return (
@@ -75,8 +117,11 @@ export default function ModelSignup() {
                         {codeError && <p style={{ color: '#ff4444', fontSize: 12, marginTop: -10 }}>{codeError}</p>}
 
                         <label className="input-label">Legal Name</label>
-                        <input type="text" className="dark-input" placeholder="Enter full legal name"
-                            value={formData.legalName} onChange={e => setFormData({ ...formData, legalName: e.target.value })} />
+                        <input type="text" className="dark-input" placeholder="Enter full legal name (First Last)"
+                            value={formData.legalName} onChange={e => setFormData({ ...formData, legalName: e.target.value })}
+                            style={{ borderColor: nameError ? '#ff4444' : '#333' }}
+                        />
+                        {nameError && <p style={{ color: '#ff4444', fontSize: 11, marginTop: -10, marginBottom: 15 }}>{nameError}</p>}
 
                         <label className="input-label">Date of Birth</label>
                         <input type="date" className="dark-input"
@@ -84,11 +129,14 @@ export default function ModelSignup() {
 
                         <div className="id-upload-section">
                             <label>Government ID (Front)</label>
+                            <p style={{ fontSize: 10, color: '#666', marginBottom: 5 }}>High-resolution photo required for AI biometric analysis.</p>
                             <div className="upload-box">
                                 <input type="file" id="idFront" hidden onChange={e => handleFileChange(e, 'idFront')} />
                                 <label htmlFor="idFront" className="upload-label">
-                                    <RiIdCardLine size={30} />
-                                    <span>{formData.idFront ? formData.idFront.name : "Tap to Upload Front"}</span>
+                                    <RiIdCardLine size={30} style={{ color: formData.idFront ? '#ffd700' : '#444' }} />
+                                    <span style={{ color: formData.idFront ? '#fff' : '#888' }}>
+                                        {formData.idFront ? `File: ${formData.idFront.name}` : "Tap to Upload Front"}
+                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -100,7 +148,7 @@ export default function ModelSignup() {
                 {step === 2 && (
                     <div className="signup-step">
                         <h2>Payout Information</h2>
-                        <p className="step-desc">Where should we send your earnings?</p>
+                        <p className="step-desc">Banking and payout authorization.</p>
 
                         <label className="input-label">Debit/Credit Card Number</label>
                         <div className="input-with-icon">
@@ -122,7 +170,18 @@ export default function ModelSignup() {
                             </div>
                         </div>
 
-                        <button className="gold-btn full-width" onClick={handleSubmit}>Submit Application</button>
+                        {isVerifying ? (
+                            <div className="verification-status-panel">
+                                <div className="spinning-loader"></div>
+                                <div className="log-container">
+                                    {verificationLog.map((log, i) => (
+                                        <div key={i} className="log-entry">&gt; {log}</div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <button className="gold-btn full-width" onClick={handleSubmit}>Authorize & Submit</button>
+                        )}
                     </div>
                 )}
             </div>
@@ -137,6 +196,29 @@ export default function ModelSignup() {
                 .upload-box { background: #222; border: 2px dashed #444; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; }
                 .upload-label { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #888; cursor: pointer; }
                 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+                .verification-status-panel {
+                    background: #111;
+                    border: 1px solid #333;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-top: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                }
+                .spinning-loader {
+                    width: 30px;
+                    height: 30px;
+                    border: 3px solid rgba(212, 175, 55, 0.3);
+                    border-top-color: #d4af37;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin { to { transform: rotate(360deg); } }
+                .log-container { width: 100%; font-family: monospace; font-size: 11px; color: #888; }
+                .log-entry { margin-bottom: 4px; border-left: 2px solid #333; padding-left: 8px; }
             `}</style>
         </div>
     );

@@ -5,17 +5,23 @@ import { RiVideoAddFill, RiImageAddFill, RiGiftFill, RiSendPlaneFill, RiMicFill,
 import { IoDiamond } from 'react-icons/io5';
 import { useChatStore } from '../store/chatStore';
 import { useStoreStore } from '../store/storeStore';
+import { useSubscriptionStore, TIERS } from '../store/useSubscriptionStore';
 import { useUserStore } from '../store/userStore';
 import { formatMessageTime } from '../utils/helpers';
 import { generateMockMessages } from '../utils/mockData';
+import { getChatUrl } from '../utils/config';
+import { io } from 'socket.io-client';
 import GiftAnimation from './GiftAnimation';
 import './ChatContent.css';
 
+const socket = io(getChatUrl());
+
 export default function ChatContent({ conversationId, isWindowMode = false, onClose, isGridMode = false }) {
     const navigate = useNavigate(); // Hook initialized
+    const { user, diamonds, spendDiamonds } = useUserStore();
+    const { tier } = useSubscriptionStore();
     const { messages, addMessage, loadMessages, setTyping } = useChatStore();
     const { gifts } = useStoreStore();
-    const { diamonds, spendDiamonds } = useUserStore();
 
     const [messageText, setMessageText] = useState('');
     const [activeGift, setActiveGift] = useState(null);
@@ -25,12 +31,40 @@ export default function ChatContent({ conversationId, isWindowMode = false, onCl
 
     const conversationMessages = messages[conversationId] || [];
 
-    // Load mock messages if none exist
+    // Socket events
     useEffect(() => {
-        if (conversationMessages.length === 0) {
-            loadMessages(conversationId, generateMockMessages(conversationId, 15));
-        }
-    }, [conversationId, conversationMessages.length, loadMessages]);
+        socket.emit('join-room', {
+            roomId: String(conversationId),
+            userId: user.id || 'me',
+            userName: user.displayName || 'Me'
+        });
+
+        socket.on('receive-message', (msg) => {
+            if (msg.sender !== (user.id || 'me')) {
+                addMessage(conversationId, {
+                    id: msg.id,
+                    text: msg.text,
+                    senderId: 'other',
+                    timestamp: msg.timestamp
+                });
+            }
+        });
+
+        socket.on('user-typing', ({ userName }) => {
+            setTyping(conversationId, userName, true);
+            setTimeout(() => setTyping(conversationId, userName, false), 3000);
+        });
+
+        return () => {
+            socket.off('receive-message');
+            socket.off('user-typing');
+        };
+    }, [conversationId, user.id, user.displayName, addMessage, setTyping]);
+
+    // Removed mock message seeding for production. Chats start empty.
+    useEffect(() => {
+        // Only load real messages from a backend if applicable
+    }, [conversationId]);
 
     // Scroll to bottom
     useEffect(() => {
@@ -40,12 +74,12 @@ export default function ChatContent({ conversationId, isWindowMode = false, onCl
     const handleSend = (type = 'text', content = null) => {
         if (type === 'text' && !messageText.trim()) return;
 
-        // Check consecutive messages limit
+        // Check consecutive messages limit (Free tier only)
         const myConsecutiveMessages = conversationMessages.slice().reverse().findIndex(m => m.senderId !== 'me');
         const count = myConsecutiveMessages === -1 ? conversationMessages.length : myConsecutiveMessages;
 
-        if (count >= 3 && type === 'text') {
-            alert("You can only send 3 unsolicited messages. Wait for a reply!");
+        if (tier === TIERS.FREE && count >= 3 && type === 'text') {
+            alert("You can only send 3 unsolicited messages. Upgrade to Gold for unlimited chat!");
             return;
         }
 
@@ -57,16 +91,15 @@ export default function ChatContent({ conversationId, isWindowMode = false, onCl
             type: type
         });
 
-        if (type === 'text') setMessageText('');
+        // Emit to server
+        socket.emit('send-message', {
+            roomId: String(conversationId),
+            message: msgContent,
+            sender: user.id || 'me',
+            senderName: user.displayName || 'Me'
+        });
 
-        // Simulate reply (delayed)
-        setTimeout(() => {
-            const replies = ["That's awesome! 😊", "I totally agree!", "Haha that's funny 😄", "Tell me more!", "Sounds great!"];
-            addMessage(conversationId, {
-                text: replies[Math.floor(Math.random() * replies.length)],
-                senderId: 'other'
-            });
-        }, 5000);
+        if (type === 'text') setMessageText('');
     };
 
     const handleSendGift = (gift) => {

@@ -21,7 +21,8 @@ export const useUserStore = create(
                 isVIP: false,
                 isVerified: false,
                 lastUsernameChange: null,
-                gender: null
+                gender: null,
+                blockedUsers: []
             },
 
             // Currency
@@ -32,7 +33,12 @@ export const useUserStore = create(
             followers: 0,
             following: 0,
             giftsReceived: 0,
-            giftsSent: [], // Array of {giftType, recipientId, recipientName, timestamp, coinCost}
+            giftsSent: [],
+
+            // Social Tracking - Real user lists (Empty for launch)
+            followingList: [],
+            friendsList: [],
+            followersList: [],
 
             // Onboarding
             hasCompletedOnboarding: false,
@@ -57,7 +63,12 @@ export const useUserStore = create(
                     videoCalls: true,
                     newFollowers: true,
                     specialOffers: true,
+                    pushEnabled: true,
+                    friendRequests: true,
                     reminderTime: null
+                },
+                display: {
+                    darkMode: true
                 },
                 privacy: {
                     showOnline: true,
@@ -197,10 +208,71 @@ export const useUserStore = create(
                 return false;
             },
 
-            setTheme: (themeId) => set({ currentTheme: themeId })
+            setTheme: (themeId) => set({ currentTheme: themeId }),
+
+            // Social Actions
+            followUser: (userId) => set((state) => {
+                if (state.followingList.includes(userId)) return state;
+                return {
+                    followingList: [...state.followingList, userId],
+                    following: state.followingList.length + 1
+                };
+            }),
+
+            unfollowUser: (userId) => set((state) => ({
+                followingList: state.followingList.filter(id => id !== userId),
+                following: Math.max(0, state.followingList.length - 1)
+            })),
+
+            addFriend: (userId) => set((state) => {
+                if (state.friendsList.includes(userId)) return state;
+                return {
+                    friendsList: [...state.friendsList, userId]
+                };
+            }),
+
+            removeFriend: (userId) => set((state) => ({
+                friendsList: state.friendsList.filter(id => id !== userId)
+            })),
+
+            isFollowing: (userId) => get().followingList.includes(userId),
+            isFriend: (userId) => get().friendsList.includes(userId),
+
+            logout: () => {
+                set({
+                    user: {
+                        id: '1',
+                        name: '',
+                        displayName: '',
+                        username: '',
+                        photos: [],
+                        blockedUsers: []
+                    },
+                    coins: 0,
+                    diamonds: 0,
+                    hasCompletedOnboarding: false
+                });
+                localStorage.removeItem('hasOnboarded');
+                localStorage.removeItem('joi-user-storage-v3');
+                window.location.href = '/';
+            }
         }),
         {
-            name: 'joi-user-storage-v2'
+            name: 'joi-user-storage-v3',
+            version: 1, // Migration for real data only launch
+            migrate: (persistedState, version) => {
+                if (version === 0) {
+                    return {
+                        ...persistedState,
+                        followers: 0,
+                        following: 0,
+                        followingList: [],
+                        friendsList: [],
+                        followersList: []
+                    };
+                }
+                return persistedState;
+            }
         }
     )
 );

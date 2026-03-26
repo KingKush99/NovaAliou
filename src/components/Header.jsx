@@ -5,12 +5,11 @@ import { useUserStore } from '../store/userStore';
 import HamburgerMenu from './HamburgerMenu';
 import './Header.css';
 import logoBg from '../assets/logo_bg.jpg';
-import coinImg from '../assets/NCoin.png';
 
 export default function Header({ title, showBack, onBack, rightAction, showBalance }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, coins } = useUserStore();
+    const { user } = useUserStore();
 
     const [isKissing, setIsKissing] = useState(false);
 
@@ -45,9 +44,15 @@ export default function Header({ title, showBack, onBack, rightAction, showBalan
             </div>
 
             <div className="header-center">
-                <div className={`header-logo-circle ${isKissing ? 'kissing' : ''}`} onClick={handleLogoClick}>
-                    <img src={logoBg} alt="NoveltyCams" />
-                </div>
+                {title ? (
+                    <div className="header-title" title={title}>
+                        {title}
+                    </div>
+                ) : (
+                    <div className={`header-logo-circle ${isKissing ? 'kissing' : ''}`} onClick={handleLogoClick}>
+                        <img src={logoBg} alt="NoveltyCams" />
+                    </div>
+                )}
             </div>
 
             <div className="header-right">

@@ -33,6 +33,7 @@ export const TIER_BENEFITS = {
         color: '#00D4FF',
         features: [
             'All Gold Benefits',
+            '15,000 Coin Bonus',
             '15% Store Discount',
             'Exclusive Filters',
             'Multiple Simultaneous Chats',

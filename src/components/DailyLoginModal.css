@@ -1,0 +1,159 @@
+.daily-login-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.daily-login-modal {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.1);
+}
+
+.daily-login-modal .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.modal-header {
+    margin-bottom: 24px;
+}
+
+.modal-header .gift-icon {
+    font-size: 48px;
+    color: #FFD700;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.streak-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+}
+
+.streak-display .fire-icon {
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.streak-display .streak-number {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+}
+
+.streak-display .streak-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.rewards-section {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.reward-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px 24px;
+    border-radius: 12px;
+}
+
+.reward-item .coin-icon {
+    font-size: 28px;
+    color: #FFD700;
+    margin-bottom: 8px;
+}
+
+.reward-item .diamond-icon {
+    font-size: 28px;
+    color: #00BFFF;
+    margin-bottom: 8px;
+}
+
+.reward-item .reward-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.reward-item .reward-label {
+    font-size: 12px;
+    color: #888;
+}
+
+.reward-item.diamond {
+    background: rgba(0, 191, 255, 0.1);
+    border: 1px solid rgba(0, 191, 255, 0.3);
+}
+
+.motivation-text {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.claim-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border: none;
+    border-radius: 12px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.claim-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.claim-btn:active {
+    transform: translateY(0);
+}

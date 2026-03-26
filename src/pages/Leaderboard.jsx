@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RiVipCrownFill, RiFireFill, RiCoinFill } from 'react-icons/ri';
-import { generateMockLeaderboard } from '../utils/mockData';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import { useUserStore } from '../store/userStore';
+import { getApiUrl } from '../utils/config';
 import './Leaderboard.css';
 
 const TABS = [
@@ -15,10 +16,32 @@ const TABS = [
 export default function Leaderboard() {
     const [activeTab, setActiveTab] = useState('model');
     const [users, setUsers] = useState([]);
+    const { user, coins } = useUserStore();
+    const [myRank, setMyRank] = useState(125); // Fallback
+    const [loadError, setLoadError] = useState(null);
+    const isMatchesTab = activeTab === 'matches';
 
     useEffect(() => {
-        // Simulate fetching data based on tab
-        setUsers(generateMockLeaderboard(50));
+        const fetchLeaderboard = async () => {
+            try {
+                setLoadError(null);
+                const apiUrl = getApiUrl();
+                const res = await fetch(`${apiUrl}/api/leaderboard?type=${encodeURIComponent(activeTab)}`);
+                if (!res.ok) throw new Error(`Leaderboard request failed (${res.status})`);
+                const data = await res.json();
+                setUsers(data);
+
+                // Find current user's rank
+                const found = data.find(u => u.name === (user.displayName || user.username));
+                if (found) setMyRank(found.rank);
+            } catch (err) {
+                console.error("Failed to fetch leaderboard:", err);
+                // Don't show mock data here; we want the leaderboard to reflect backend state.
+                setUsers([]);
+                setLoadError('Leaderboard unavailable. Start the API server on port 3003.');
+            }
+        };
+        fetchLeaderboard();
     }, [activeTab]);
 
     return (
@@ -72,14 +95,29 @@ export default function Leaderboard() {
                                 <div className="podium-info">
                                     <span className="podium-name">{user.name}</span>
                                     <span className="podium-score">
-                                        <RiCoinFill className="coin-icon" />
-                                        {user.coins.toLocaleString()}
+                                        {isMatchesTab ? (
+                                            <>
+                                                <RiFireFill className="coin-icon" />
+                                                {(user.matches || 0).toLocaleString()}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <RiCoinFill className="coin-icon" />
+                                                {(user.coins || 0).toLocaleString()}
+                                            </>
+                                        )}
                                     </span>
                                 </div>
                             </motion.div>
                         );
                     })}
                 </div>
+
+                {loadError && (
+                    <div style={{ padding: '12px 16px', color: '#ffb703' }}>
+                        {loadError}
+                    </div>
+                )}
 
                 {/* List */}
                 <div className="leaderboard-list">
@@ -100,8 +138,17 @@ export default function Leaderboard() {
                                 </span>
                             </div>
                             <div className="list-score">
-                                <RiCoinFill className="coin-icon" />
-                                {user.coins.toLocaleString()}
+                                {isMatchesTab ? (
+                                    <>
+                                        <RiFireFill className="coin-icon" />
+                                        {(user.matches || 0).toLocaleString()}
+                                    </>
+                                ) : (
+                                    <>
+                                        <RiCoinFill className="coin-icon" />
+                                        {(user.coins || 0).toLocaleString()}
+                                    </>
+                                )}
                             </div>
                         </motion.div>
                     ))}
@@ -109,14 +156,27 @@ export default function Leaderboard() {
 
                 {/* Current User Fixed Bottom */}
                 <div className="current-user-rank">
-                    <span className="rank-number">125</span>
-                    <div className="list-avatar placeholder-avatar" />
+                    <span className="rank-number">{myRank}</span>
+                    {user.photos?.[0] ? (
+                        <img src={user.photos[0]} alt="You" className="list-avatar" />
+                    ) : (
+                        <div className="list-avatar placeholder-avatar" />
+                    )}
                     <div className="list-info">
-                        <span className="list-name">You</span>
+                        <span className="list-name">You ({user.displayName || user.username || 'User'})</span>
                     </div>
                     <div className="list-score">
-                        <RiCoinFill className="coin-icon" />
-                        1,250
+                        {isMatchesTab ? (
+                            <>
+                                <RiFireFill className="coin-icon" />
+                                0
+                            </>
+                        ) : (
+                            <>
+                                <RiCoinFill className="coin-icon" />
+                                {coins.toLocaleString()}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

@@ -11,7 +11,12 @@ import BottomNav from '../components/BottomNav';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import UnifiedPayment from '../components/UnifiedPayment';
+import { getApiUrl } from '../utils/config';
+import { Capacitor } from '@capacitor/core';
+import { getProductIdForStoreItem } from '../config/iapProducts';
+import { getPurchasesController } from '../utils/purchases';
 import './Store.css';
+
 
 export default function Store() {
     const [activeTab, setActiveTab] = useState('subs');
@@ -20,7 +25,13 @@ export default function Store() {
 
     const { vipPackages, diamondPackages, coinPackages, gifts } = useStoreStore();
     const { addDiamonds, addCoins, upgradeToVIP } = useUserStore();
-    const { setTier } = useSubscriptionStore();
+    const { tier, setTier } = useSubscriptionStore();
+
+    const getDiscountedPrice = (price) => {
+        if (tier === TIERS.PLATINUM) return (price * 0.7).toFixed(2);
+        if (tier === TIERS.DIAMOND) return (price * 0.85).toFixed(2);
+        return price.toFixed(2);
+    };
 
     const tabs = [
         { id: 'subs', label: 'Subscriptions', icon: <RiShieldStarFill /> },
@@ -30,28 +41,99 @@ export default function Store() {
     ];
 
     const handlePurchase = (item, type) => {
-        setSelectedItem({ ...item, type });
+        const finalPrice = (type === 'coins' || type === 'diamonds') ? getDiscountedPrice(item.price) : item.price;
+        const next = { ...item, type, price: parseFloat(finalPrice) };
+
+        // On iOS/Android, use In-App Purchases (RevenueCat) for digital goods.
+        const platform = Capacitor.getPlatform();
+        const isNative = platform === 'ios' || platform === 'android';
+        if (isNative && (type === 'coins' || type === 'diamonds' || type === 'sub')) {
+            (async () => {
+                try {
+                    const productId = getProductIdForStoreItem(type, item.id);
+                    if (!productId) {
+                        alert(`Missing IAP product ID mapping for ${type}:${item.id}`);
+                        return;
+                    }
+
+                    const purchases = await getPurchasesController();
+                    await purchases.configure?.({ appUserId: useUserStore.getState().user?.id });
+                    await purchases.purchaseProductId?.(productId);
+
+                    // Sync wallet from RevenueCat virtual currency if configured.
+                    const vc = await purchases.getVirtualCurrencies?.();
+                    const coinsBalance = vc?.virtualCurrencies?.coins?.balance;
+                    if (typeof coinsBalance === 'number' && Number.isFinite(coinsBalance)) {
+                        useUserStore.getState().setCoins(Math.max(0, Math.floor(coinsBalance)));
+                    }
+
+                    // Close flow + update leaderboard (coins should come from RevenueCat).
+                    confirmPurchase(next, { isIap: true });
+                } catch (err) {
+                    console.error('IAP purchase failed:', err);
+                    alert(err?.message || 'Purchase failed.');
+                }
+            })();
+            return;
+        }
+
+        setSelectedItem(next);
         setShowPurchaseModal(true);
     };
 
-    const confirmPurchase = () => {
-        if (selectedItem.type === 'sub') {
-            setTier(selectedItem.tier);
-            // Add bonus coins if applicable
-            if (selectedItem.tier === TIERS.GOLD) addCoins(10000);
-            if (selectedItem.tier === TIERS.PLATINUM) addCoins(25000);
-        } else if (selectedItem.type === 'diamonds') {
-            addDiamonds(selectedItem.amount + (selectedItem.bonus || 0));
-        } else if (selectedItem.type === 'coins') {
-            addCoins(selectedItem.amount);
+    const updateLeaderboard = () => {
+        const currentUser = useUserStore.getState();
+        const apiUrl = getApiUrl();
+        fetch(`${apiUrl}/api/leaderboard/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: currentUser.user.id,
+                name: currentUser.user.displayName || currentUser.user.username || 'User',
+                coins: currentUser.coins,
+                avatar: currentUser.user.photos?.[0]
+            })
+        }).catch(err => console.error("Leaderboard update failed:", err));
+    };
+
+    const confirmPurchase = (item = selectedItem, { isIap = false } = {}) => {
+        if (!item) return;
+
+        // For IAP flows (iOS/Android), don't grant currency locally.
+        // RevenueCat should grant via virtual currencies / entitlements.
+        if (isIap) {
+            updateLeaderboard();
+            setShowPurchaseModal(false);
+            setSelectedItem(null);
+            return;
         }
+
+        let newCoins = 0;
+        let newDiamonds = 0;
+
+        if (item.type === 'sub') {
+            setTier(item.tier);
+            if (item.tier === TIERS.GOLD) newCoins = 10000;
+            if (item.tier === TIERS.DIAMOND) newCoins = 15000;
+            if (item.tier === TIERS.PLATINUM) newCoins = 25000;
+        } else if (item.type === 'diamonds') {
+            newDiamonds = item.amount + (item.bonus || 0);
+        } else if (item.type === 'coins') {
+            newCoins = item.amount;
+        }
+
+        if (newCoins) addCoins(newCoins);
+        if (newDiamonds) addDiamonds(newDiamonds);
+
+        updateLeaderboard();
+
         setShowPurchaseModal(false);
         setSelectedItem(null);
     };
 
     return (
         <div className="store-page">
-            <Header title="Store" showBalance />
+            <Header title="Store" />
 
             <div className="store-tabs">
                 {tabs.map((tab) => (
@@ -97,7 +179,12 @@ export default function Store() {
                                     <Button
                                         variant="primary"
                                         fullWidth
-                                        onClick={() => handlePurchase({ ...tier, tier: tierKey }, 'sub')}
+                                        onClick={() =>
+                                            handlePurchase(
+                                                { ...tier, tier: tierKey, id: `vip-${String(tierKey).toLowerCase()}-monthly` },
+                                                'sub'
+                                            )
+                                        }
                                         style={{ background: tier.color, color: '#000', marginBottom: '10px' }}
                                     >
                                         Subscribe
@@ -109,7 +196,7 @@ export default function Store() {
                                             // Temporary preview
                                             document.documentElement.setAttribute('data-theme', tierKey.toLowerCase());
                                             setTimeout(() => {
-                                                // Revert after 5 seconds if not subscribed
+                                                // Revert after 15 seconds if not subscribed
                                                 const currentTier = useSubscriptionStore.getState().tier;
                                                 const theme = currentTier === 'FREE' || currentTier === 'GOLD' ? 'default' : currentTier.toLowerCase();
                                                 document.documentElement.setAttribute('data-theme', theme);
@@ -147,7 +234,16 @@ export default function Store() {
                                 {pkg.bonus > 0 && (
                                     <div className="bonus-badge">+{pkg.bonus} Bonus</div>
                                 )}
-                                <div className="card-price">${pkg.price}</div>
+                                <div className="card-price">
+                                    {(tier === TIERS.DIAMOND || tier === TIERS.PLATINUM) ? (
+                                        <>
+                                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.9em', marginRight: '8px' }}>${pkg.price}</span>
+                                            <span style={{ color: '#00FF88' }}>${getDiscountedPrice(pkg.price)}</span>
+                                        </>
+                                    ) : (
+                                        `$${pkg.price}`
+                                    )}
+                                </div>
                                 <Button
                                     variant="primary"
                                     fullWidth
@@ -176,7 +272,16 @@ export default function Store() {
                                     <FaCoins size={32} />
                                 </div>
                                 <h3 className="card-amount">{pkg.amount.toLocaleString()}</h3>
-                                <div className="card-price">${pkg.price}</div>
+                                <div className="card-price">
+                                    {(tier === TIERS.DIAMOND || tier === TIERS.PLATINUM) ? (
+                                        <>
+                                            <span style={{ textDecoration: 'line-through', opacity: 0.6, fontSize: '0.9em', marginRight: '8px' }}>${pkg.price}</span>
+                                            <span style={{ color: '#00FF88' }}>${getDiscountedPrice(pkg.price)}</span>
+                                        </>
+                                    ) : (
+                                        `$${pkg.price}`
+                                    )}
+                                </div>
                                 <Button
                                     variant="primary"
                                     fullWidth

@@ -52,11 +52,34 @@
 .slots-title {
     color: #FFD700;
     text-align: center;
-    margin: 0 0 20px 0;
+    margin: 0 0 5px 0;
     font-size: 20px;
     text-transform: uppercase;
     letter-spacing: 2px;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.slots-balance {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #FFD700;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slots-balance svg {
+    color: #FFD700;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
 }
 
 .slots-machine {

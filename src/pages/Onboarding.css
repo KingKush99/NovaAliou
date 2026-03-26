@@ -67,6 +67,7 @@
     margin-bottom: 16px;
     background: linear-gradient(45deg, #fff, #bbb);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -104,25 +105,6 @@
     background: #FFD700;
     width: 24px;
     border-radius: 4px;
-}
-
-.next-btn {
-    background: #FFD700;
-    color: #000;
-    border: none;
-    padding: 16px 32px;
-    border-radius: 30px;
-    font-size: 18px;
-    font-weight: bold;
-    width: 100%;
-    max-width: 300px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-    transition: transform 0.2s;
 }
 
 .onboarding-form {
@@ -170,4 +152,136 @@
     font-size: 12px;
     color: #888;
     margin-top: 8px;
+}
+
+.permissions-step {
+    text-align: center;
+}
+
+.permission-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.permission-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00E5FF;
+    /* animation removed per user request */
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* Footer & New Elements */
+.onboarding-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 20px;
+}
+
+.footer-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.onboarding-footer .next-btn,
+.onboarding-footer .back-btn {
+    background: white;
+    color: #000;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.onboarding-footer .next-btn {
+    background: #FFD700;
+}
+
+.onboarding-footer .back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    box-shadow: none;
+}
+
+.onboarding-camera-preview {
+    width: 100%;
+    height: 200px;
+    background: black;
+    border-radius: 16px;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid #00E5FF;
+}
+
+.camera-preview-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hint.success {
+    color: #4ECDC4;
+    font-weight: 600;
+}
+
+.skip-btn {
+    background: transparent;
+    color: rgba(255, 215, 0, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.skip-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    color: #FFD700;
+    border-color: #FFD700;
+}
+
+/* Gold back button to match theme */
+.onboarding-footer .back-btn {
+    background: #000 !important;
+    color: #fff !important;
+    border: 2px solid #FFD700 !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 30px !important;
+}
+
+.onboarding-footer .back-btn:hover {
+    background: #222 !important;
 }

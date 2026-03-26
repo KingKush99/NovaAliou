@@ -1,4 +1,5 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChatStore } from '../store/chatStore';
 import Header from '../components/Header';
 import ChatContent from '../components/ChatContent';
@@ -7,11 +8,12 @@ import './Chat.css';
 
 export default function Chat({ conversationId: propId, isSplitView = false }) {
     const { conversationId: paramId } = useParams();
-    const conversationId = propId ? Number(propId) : Number(paramId);
+    const conversationId = String(propId || paramId || '');
     const navigate = useNavigate();
-    const { conversations, openChatWindow } = useChatStore();
+    const location = useLocation();
+    const { conversations, initializeConversation, setActiveConversation } = useChatStore();
 
-    const conversation = conversations.find(c => c.id === Number(conversationId));
+    const conversation = conversations.find(c => String(c.id) === String(conversationId));
 
     const handleVideoCall = () => {
         if (conversation) {
@@ -19,14 +21,22 @@ export default function Chat({ conversationId: propId, isSplitView = false }) {
         }
     };
 
-    const handleOpenWindow = () => {
-        openChatWindow(conversationId);
-        navigate('/messages'); // Go back to list after opening window? Or stay? Let's go back so they see the window floating.
-    };
+
+
+    useEffect(() => {
+        if (!conversationId) return;
+
+        // Always keep store in sync with the URL.
+        setActiveConversation(conversationId);
+
+        // If user deep-linked or store was empty, initialize from navigation state.
+        if (!conversation && location.state && typeof location.state === 'object') {
+            const { name, avatar, isOnline } = location.state;
+            initializeConversation(conversationId, { name, avatar, isOnline });
+        }
+    }, [conversationId, conversation, initializeConversation, location.state, setActiveConversation]);
 
     if (!conversation) {
-        // Auto-redirect if not found (prevents dead screen)
-        setTimeout(() => navigate('/chats'), 500);
         return <div className="chat-page error">Loading...</div>;
     }
 
@@ -34,13 +44,10 @@ export default function Chat({ conversationId: propId, isSplitView = false }) {
         <div className="chat-page">
             {!isSplitView && (
                 <Header
-                    title={conversation.name}
+                    title={conversation.userName || conversation.name || `Chat with User ${conversation.id}`}
                     showBack
                     rightAction={
                         <div className="chat-header-actions">
-                            <button className="header-action-btn" onClick={handleOpenWindow} title="Open in Window" style={{ marginRight: '8px' }}>
-                                <RiLayoutGridFill size={24} />
-                            </button>
                             <button className="header-action-btn" onClick={handleVideoCall}>
                                 <RiVideoAddFill size={24} />
                             </button>

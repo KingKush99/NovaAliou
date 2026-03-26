@@ -128,9 +128,13 @@ export const generateMockMessages = (conversationId, count = 20) => {
         "We have a lot in common!"
     ];
 
+    const idStr = String(conversationId);
+    const seed = idStr.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const offset = seed % messageTexts.length;
+
     return Array.from({ length: count }, (_, i) => ({
         id: `msg-${conversationId}-${i + 1}`,
-        text: messageTexts[i % messageTexts.length],
+        text: messageTexts[(i + offset) % messageTexts.length],
         senderId: i % 3 === 0 ? 'me' : 'other',
         timestamp: new Date(Date.now() - (count - i) * 300000), // 5 min intervals
         read: i < count - 3

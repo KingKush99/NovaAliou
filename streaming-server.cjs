@@ -67,6 +67,32 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Handle Gifts & Payouts (40% to Model, 30% to Platform, 30% to App Store)
+    socket.on('send-gift', ({ streamId, senderName, giftName, coinCost }) => {
+        const stream = streams.get(streamId);
+        if (stream) {
+            // Model gets 40% of the coin value as Diamonds
+            const diamondValue = Math.floor(coinCost * 0.40);
+
+            // Notify the room (Visuals)
+            io.to(streamId).emit('gift-received', {
+                senderName,
+                giftName,
+                coinCost,
+                timestamp: new Date().toISOString()
+            });
+
+            // Notify the Streamer (Wallet Update) - Private Message
+            io.to(stream.socketId).emit('payout-update', {
+                amount: diamondValue,
+                source: 'gift',
+                from: senderName
+            });
+
+            console.log(`🎁 Gift: ${senderName} sent ${giftName} (${coinCost} coins) to ${stream.name}. Payout: ${diamondValue} diamonds (40%).`);
+        }
+    });
+
     // End stream
     socket.on('end-stream', (streamId) => {
         io.to(streamId).emit('stream-ended');

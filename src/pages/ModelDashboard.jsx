@@ -3,22 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { RiCoinFill, RiBankCardFill, RiBitCoinFill, RiTimeFill, RiCheckboxCircleFill } from 'react-icons/ri';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import { useUserStore } from '../store/userStore';
 import './ModelDashboard.css';
 
 export default function ModelDashboard() {
     const navigate = useNavigate();
-    const [earnings, setEarnings] = useState(1240);
+    const { diamonds } = useUserStore();
+    const earnings = diamonds; // Use real diamonds as earnings
     const [payoutMethod, setPayoutMethod] = useState('crypto'); // 'crypto' or 'fiat'
     const [address, setAddress] = useState('');
     const [autoPayout, setAutoPayout] = useState(false);
 
-    // Simulate earnings (2 coins per second)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setEarnings(prev => prev + 2);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+    // Removed fake earnings simulation
 
     const handleSave = () => {
         if (!address) {

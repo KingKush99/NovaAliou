@@ -7,40 +7,23 @@ export default function BackgroundMusic() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(0.3);
     const [isMuted, setIsMuted] = useState(false);
-    const [hasInteracted, setHasInteracted] = useState(false);
+    const [hasUserStartedMusic, setHasUserStartedMusic] = useState(false); // Only show bar if user clicked play
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isShuffle, setIsShuffle] = useState(false);
     const [isRepeat, setIsRepeat] = useState(false);
 
     // Hide music player on onboarding and start screen
-    // Use window.location instead of useLocation to avoid router context issues
     const hiddenPaths = ['/', '/onboarding'];
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-    if (hiddenPaths.includes(currentPath)) {
+
+    // Only show the bar if user has started music AND not on hidden paths
+    if (hiddenPaths.includes(currentPath) || !hasUserStartedMusic) {
         return null;
     }
 
-    // Auto-play after first user interaction
-    useEffect(() => {
-        const handleFirstInteraction = () => {
-            if (!hasInteracted) {
-                setHasInteracted(true);
-                if (audioRef.current) {
-                    audioRef.current.play().catch(err => console.log('Autoplay prevented:', err));
-                    setIsPlaying(true);
-                }
-            }
-        };
-
-        document.addEventListener('click', handleFirstInteraction, { once: true });
-        document.addEventListener('touchstart', handleFirstInteraction, { once: true });
-
-        return () => {
-            document.removeEventListener('click', handleFirstInteraction);
-            document.removeEventListener('touchstart', handleFirstInteraction);
-        };
-    }, [hasInteracted]);
+    // Remove auto-play - user must explicitly start music
+    // (No auto-interaction listeners)
 
     // Update audio volume
     useEffect(() => {
@@ -72,6 +55,7 @@ export default function BackgroundMusic() {
                 audioRef.current.pause();
             } else {
                 audioRef.current.play();
+                setHasUserStartedMusic(true); // Show bar when user starts playing
             }
             setIsPlaying(!isPlaying);
         }

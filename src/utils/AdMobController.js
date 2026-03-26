@@ -30,8 +30,7 @@ export const AdMobController = {
         try {
             await AdMob.initialize({
                 requestTrackingAuthorization: true,
-                testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'], // Add your device ID for test mode
-                initializeForTesting: true,
+                initializeForTesting: false,
             });
             isInitialized = true;
             console.log('✅ AdMob Initialized');
@@ -53,7 +52,7 @@ export const AdMobController = {
                 adSize: BannerAdSize.ADAPTIVE_BANNER,
                 position: BannerAdPosition.TOP_CENTER,
                 margin: margin,
-                isTesting: true // Set to false when publishing
+                isTesting: false // Set to false when publishing
             });
         } catch (e) {
             console.error('❌ Show Banner Fail:', e);
@@ -107,7 +106,7 @@ export const AdMobController = {
                 // Prepare and Show
                 await AdMob.prepareRewardVideoAd({
                     adId: getAdId('reward'),
-                    isTesting: true
+                    isTesting: false
                 });
                 await AdMob.showRewardVideoAd();
 

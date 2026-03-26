@@ -125,7 +125,7 @@ export default function Streams() {
             <div className="go-live-fab">
                 <button
                     className="go-live-btn"
-                    onClick={() => navigate('/broadcast')}
+                    onClick={() => navigate('/go-live')}
                 >
                     <RiAddCircleFill size={24} />
                     <span>Go Live</span>

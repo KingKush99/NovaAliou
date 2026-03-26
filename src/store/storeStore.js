@@ -80,7 +80,23 @@ const useStoreStore = create((set) => ({
         { id: 'crown', name: 'Crown', category: 'jewelry', price: 200, image: '👑' },
         { id: 'car', name: 'Sports Car', category: 'luxury', price: 500, image: '🏎️' },
         { id: 'yacht', name: 'Yacht', category: 'luxury', price: 1000, image: '🛥️' },
-        { id: 'island', name: 'Private Island', category: 'luxury', price: 5000, image: '🏝️' }
+        { id: 'island', name: 'Private Island', category: 'luxury', price: 5000, image: '🏝️' },
+        { id: 'teddy', name: 'Teddy Bear', category: 'toys', price: 40, image: '🧸' },
+        { id: 'perfume', name: 'Perfume', category: 'luxury', price: 80, image: '🧴' },
+        { id: 'bag', name: 'Designer Bag', category: 'luxury', price: 300, image: '👜' },
+        { id: 'heels', name: 'High Heels', category: 'fashion', price: 150, image: '👠' },
+        { id: 'watch', name: 'Luxury Watch', category: 'jewelry', price: 400, image: '⌚' },
+        { id: 'necklace', name: 'Necklace', category: 'jewelry', price: 250, image: '📿' },
+        { id: 'sunglasses', name: 'Sunglasses', category: 'fashion', price: 60, image: '🕶️' },
+        { id: 'lipstick', name: 'Lipstick', category: 'makeup', price: 25, image: '💄' },
+        { id: 'champagne', name: 'Champagne', category: 'drinks', price: 120, image: '🍾' },
+        { id: 'cocktail', name: 'Cocktail', category: 'drinks', price: 15, image: '🍹' },
+        { id: 'pizza', name: 'Pizza', category: 'food', price: 12, image: '🍕' },
+        { id: 'burger', name: 'Burger', category: 'food', price: 10, image: '🍔' },
+        { id: 'sushi', name: 'Sushi', category: 'food', price: 25, image: '🍣' },
+        { id: 'guitar', name: 'Guitar', category: 'music', price: 200, image: '🎸' },
+        { id: 'camera', name: 'Camera', category: 'tech', price: 600, image: '📷' },
+        { id: 'phone', name: 'Smartphone', category: 'tech', price: 800, image: '📱' }
     ],
 
     // Purchase history

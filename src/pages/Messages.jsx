@@ -65,13 +65,10 @@ export default function Messages() {
         document.body.style.cursor = 'col-resize';
     };
 
+    // Removed mock conversation seeding for production - Inbox starts empty
     useEffect(() => {
-        if (conversations.length === 0) {
-            const profiles = generateMockProfiles(15);
-            const mockConversations = generateMockConversations(profiles);
-            setConversations(mockConversations);
-        }
-    }, [conversations.length, setConversations]);
+        // Only fetch if we had a real backend, otherwise leave as empty array []
+    }, []);
 
     const handleConversationClick = (conversation) => {
         setActiveConversation(conversation.id);

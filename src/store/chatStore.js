@@ -16,49 +16,68 @@ const useChatStore = create((set, get) => ({
 
     // Initialize specific conversation (fix for navigation)
     initializeConversation: (conversationId, data) => set((state) => {
-        const exists = state.conversations.find(c => c.id === conversationId);
-        if (!exists) {
+        const id = String(conversationId);
+        const name = data?.name || data?.userName || `User ${id}`;
+        const avatar = data?.avatar || data?.userPhoto;
+
+        const existsIndex = state.conversations.findIndex(c => String(c.id) === id);
+        if (existsIndex === -1) {
             return {
-                conversations: [...state.conversations, {
-                    id: conversationId,
-                    name: data.name,
-                    avatar: data.avatar,
-                    isOnline: data.isOnline,
-                    unreadCount: 0,
-                    lastMessage: '',
-                    lastMessageTime: new Date()
-                }],
-                activeConversation: conversationId
+                conversations: [
+                    ...state.conversations,
+                    {
+                        id,
+                        userId: id,
+                        name,
+                        avatar,
+                        isOnline: Boolean(data?.isOnline),
+                        unreadCount: 0,
+                        lastMessage: '',
+                        lastMessageTime: new Date()
+                    }
+                ],
+                activeConversation: id
             };
         }
-        return { activeConversation: conversationId };
+
+        // Keep existing conversation but refresh identity fields if provided.
+        const nextConversations = state.conversations.slice();
+        nextConversations[existsIndex] = {
+            ...nextConversations[existsIndex],
+            name: name || nextConversations[existsIndex].name,
+            avatar: avatar || nextConversations[existsIndex].avatar,
+            isOnline: data?.isOnline ?? nextConversations[existsIndex].isOnline
+        };
+
+        return { conversations: nextConversations, activeConversation: id };
     }),
 
     // Set active conversation
     setActiveConversation: (conversationId) => set({
-        activeConversation: conversationId
+        activeConversation: String(conversationId)
     }),
 
     // Add message
     addMessage: (conversationId, message) => set((state) => {
-        const conversationMessages = state.messages[conversationId] || [];
+        const id = String(conversationId);
+        const conversationMessages = state.messages[id] || [];
 
         return {
             messages: {
                 ...state.messages,
-                [conversationId]: [...conversationMessages, {
+                [id]: [...conversationMessages, {
                     ...message,
                     id: Date.now(),
                     timestamp: new Date()
                 }]
             },
             conversations: state.conversations.map(conv =>
-                conv.id === conversationId
+                String(conv.id) === id
                     ? {
                         ...conv,
                         lastMessage: message.text,
                         lastMessageTime: new Date(),
-                        unreadCount: conv.id === state.activeConversation ? 0 : (conv.unreadCount || 0) + 1
+                        unreadCount: String(conv.id) === String(state.activeConversation) ? 0 : (conv.unreadCount || 0) + 1
                     }
                     : conv
             )
@@ -67,16 +86,17 @@ const useChatStore = create((set, get) => ({
 
     // Load messages for conversation
     loadMessages: (conversationId, messages) => set((state) => ({
+        // Normalize key to string to avoid collisions/duplicates.
         messages: {
             ...state.messages,
-            [conversationId]: messages
+            [String(conversationId)]: messages
         }
     })),
 
     // Mark as read
     markAsRead: (conversationId) => set((state) => ({
         conversations: state.conversations.map(conv =>
-            conv.id === conversationId
+            String(conv.id) === String(conversationId)
                 ? { ...conv, unreadCount: 0 }
                 : conv
         )
@@ -98,7 +118,7 @@ const useChatStore = create((set, get) => ({
             return {
                 openWindows: [...state.openWindows, conversationId],
                 // Optionally limit to 3 windows max for performance
-                // openWindows: [...state.openWindows.slice(-2), conversationId] 
+                // openWindows: [...state.openWindows.slice(-2), conversationId]
             };
         }
         return {};
@@ -125,7 +145,15 @@ const useChatStore = create((set, get) => ({
     getTotalUnread: () => {
         const state = get();
         return state.conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
-    }
+    },
+
+    // Clear everything (Production sanity)
+    clearAllChats: () => set({
+        conversations: [],
+        messages: {},
+        activeConversation: null,
+        openWindows: []
+    })
 }));
 
 export { useChatStore };

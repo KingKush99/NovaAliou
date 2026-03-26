@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiUser3Fill, RiRobot2Fill, RiGamepadFill } from 'react-icons/ri';
+import { RiUser3Fill, RiRobot2Fill, RiGamepadFill, RiMusicFill } from 'react-icons/ri';
 import { useUserStore } from '../store/userStore';
 import { useHUDStore } from '../store/useHUDStore';
-import { useChatStore } from '../store/chatStore'; // Import chat store
+import { useChatStore } from '../store/chatStore';
 import MiniSlots from './MiniSlots';
 import Chatbot from './Chatbot';
-import ChatWindow from './ChatWindow'; // Import ChatWindow
+import MusicPlayer from './MusicPlayer';
 import './GlobalHUD.css';
 
 export default function GlobalHUD() {
@@ -15,13 +15,13 @@ export default function GlobalHUD() {
     const location = useLocation();
     const { user } = useUserStore();
     const { showChatbot: chatbotEnabled, showMiniSlots: slotsEnabled } = useHUDStore();
-    const { openWindows } = useChatStore(); // Get open windows from store
+    const { openWindows } = useChatStore();
 
     const [showSlots, setShowSlots] = useState(false);
     const [showChatbot, setShowChatbot] = useState(false);
+    const [showMusicPlayer, setShowMusicPlayer] = useState(false);
 
-    // Hide HUD in stream rooms, video calls (BUT NOT PROFILE to allow chat on profile)
-    // Removed isProfile from hiding logic as per user request for "multiple chats... same time" which implies multitasking
+    // Hide HUD in stream rooms, video calls
     const isInStream = location.pathname.startsWith('/stream/');
     const isInCall = location.pathname.startsWith('/call/');
     const isInChat = location.pathname.startsWith('/chat/') || location.pathname === '/messages';
@@ -44,6 +44,8 @@ export default function GlobalHUD() {
                     </motion.button>
                 )}
 
+                {/* Music button removed per user request - access through Settings */}
+
                 {/* Bottom Right: Mini Slots */}
                 {slotsEnabled && (
                     <motion.button
@@ -60,17 +62,9 @@ export default function GlobalHUD() {
             <AnimatePresence>
                 {showSlots && <MiniSlots key="slots" onClose={() => setShowSlots(false)} />}
                 {showChatbot && <Chatbot key="chatbot" onClose={() => setShowChatbot(false)} />}
-
-                {/* Floating Chat Windows - Disabled per user request */}
-                {/* {openWindows.map((chatId, index) => (
-                    <ChatWindow
-                        key={chatId}
-                        conversationId={chatId}
-                        index={index}
-                        initialPosition={{ x: 100 + (index * 40), y: 100 + (index * 40) }}
-                    />
-                ))} */}
+                {showMusicPlayer && <MusicPlayer key="music" onClose={() => setShowMusicPlayer(false)} />}
             </AnimatePresence>
         </>
     );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -6,6 +6,7 @@ import {
     RiAddLine, RiArrowLeftLine, RiLayoutRowLine, RiLayoutColumnLine
 } from 'react-icons/ri';
 import { useChatStore } from '../store/chatStore';
+import { generateMockProfiles, generateMockConversations } from '../utils/mockData';
 import ChatContent from '../components/ChatContent';
 import Header from '../components/Header';
 import './ChatMultiView.css';
@@ -14,13 +15,10 @@ export default function ChatMultiView() {
     const navigate = useNavigate();
     const { conversations, setConversations } = useChatStore();
 
-    // Load Mock Data if Empty (Safety)
-    if (conversations.length === 0) {
-        import('../utils/mockData').then(({ generateMockProfiles, generateMockConversations }) => {
-            const profiles = generateMockProfiles(15);
-            setConversations(generateMockConversations(profiles));
-        });
-    }
+    // Removed mock chat seeding for production. Grid starts empty.
+    useEffect(() => {
+        // Only load if we have active conversations in the store
+    }, []);
 
     // Grid State: [top-left, top-right, bottom-left, bottom-right] (null = empty)
     const [gridSlots, setGridSlots] = useState([null, null, null, null]);

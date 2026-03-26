@@ -13,6 +13,7 @@ import Chats from './pages/Chats';
 import ChatMultiView from './pages/ChatMultiView';
 import NotificationSimulator from './components/NotificationSimulator';
 import NotificationPopup from './components/NotificationPopup';
+import DailyLoginModal from './components/DailyLoginModal';
 import Profile from './pages/Profile';
 import Store from './pages/Store';
 import Leaderboard from './pages/Leaderboard';
@@ -22,22 +23,25 @@ import Legal from './pages/Legal';
 import GameCenter from './pages/GameCenter';
 import GlobalHUD from './components/GlobalHUD';
 import Streams from './pages/Streams';
-import GoLive from './pages/GoLive'; // Import GoLive
+import GoLive from './pages/GoLive';
 import StreamRoom from './pages/StreamRoom';
 import History from './pages/History';
 import ModelSignup from './pages/ModelSignup';
 import ModelDashboard from './pages/ModelDashboard';
 import ChatSplitView from './pages/ChatSplitView';
-
 import { useUserStore } from './store/userStore';
 import BackgroundMusic from './components/BackgroundMusic';
+import AdBanner from './components/AdBanner';
+import MusicPlayerBar from './components/MusicPlayerBar';
 import './App.css';
-
 import { useTheme } from './hooks/useTheme';
+import { getPurchasesController } from './utils/purchases';
 
 function App() {
     const [showSplash, setShowSplash] = useState(true);
-    useTheme(); // Applies theme based on subscription tier
+    const [dailyLoginData, setDailyLoginData] = useState(null); // { streak, coins, diamonds }
+    const { hasCompletedOnboarding, user, setUser, coins, setCoins } = useUserStore(); // Get from store
+    useTheme();
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -50,17 +54,41 @@ function App() {
             PushController.addListeners();
         });
 
-        // Initialize AdMob (Real Ads)
+        // Initialize AdMob
         import('./utils/AdMobController').then(({ AdMobController }) => {
             AdMobController.initialize();
         });
 
-        // Daily Login Logic (Re-applying)
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Configure RevenueCat IAP (iOS/Android) and sync wallet if configured.
+    useEffect(() => {
+        (async () => {
+            try {
+                const purchases = await getPurchasesController();
+                await purchases.configure?.({ appUserId: user?.id });
+                const vc = await purchases.getVirtualCurrencies?.();
+                const coinsBalance = vc?.virtualCurrencies?.coins?.balance;
+                if (typeof coinsBalance === 'number' && Number.isFinite(coinsBalance)) {
+                    setCoins(Math.max(0, Math.floor(coinsBalance)));
+                }
+            } catch (err) {
+                // IAP is optional in dev; only log to console.
+                console.warn('IAP init skipped:', err?.message || err);
+            }
+        })();
+    }, [user?.id, setCoins]);
+
+    // Daily Login Logic - Runs on mount AND when onboarding completes
+    useEffect(() => {
         const checkDailyLogin = () => {
             const lastLogin = localStorage.getItem('lastLoginDate');
             const today = new Date().toDateString();
+            const showAfterOnboarding = localStorage.getItem('showDailyLogin');
 
-            if (lastLogin !== today) {
+            // Force show after onboarding OR on new day
+            if (showAfterOnboarding === 'true' || lastLogin !== today) {
                 const currentStreak = parseInt(localStorage.getItem('loginStreak') || '0');
                 const newStreak = currentStreak + 1;
 
@@ -72,35 +100,25 @@ function App() {
 
                 localStorage.setItem('lastLoginDate', today);
                 localStorage.setItem('loginStreak', newStreak.toString());
+                localStorage.removeItem('showDailyLogin'); // Clear flag after showing
 
-                setTimeout(() => {
-                    // Simple alert for user feedback
-                    alert(`Daily Login! Streak: ${newStreak} Days\nReceived: ${coinReward} Coins${diamondReward > 0 ? ` & ${diamondReward} Diamonds!` : ''}`);
-                }, 3000);
+                // Show stylish modal
+                setDailyLoginData({ streak: newStreak, coins: coinReward, diamonds: diamondReward });
             }
         };
-        checkDailyLogin();
 
-        // Force Sync Coins for new limit
-        const { coins, setCoins, user, setUser } = useUserStore.getState();
-        if (coins < 2500) {
-            console.log("Forcing coin update to 2500");
-            setCoins(2500);
+        // Small delay to ensure smooth transition from onboarding
+        const timeout = setTimeout(checkDailyLogin, 1000);
+        return () => clearTimeout(timeout);
+    }, [hasCompletedOnboarding]); // Trigger when onboarding finishes
+
+    // Data Integrity Checks
+    useEffect(() => {
+        if (coins < 2500) setCoins(2500);
+        if (user.displayName === 'Display Name undefined' || user.username === 'Display Name undefined') {
+            setUser({ ...user, name: 'User', displayName: 'User', username: `user${user.id || '1'}` });
         }
-
-        // Fix Corrupted Data (The "Display Name undefined" bug)
-        if (user.displayName === 'Display Name undefined' || user.username === 'Display Name undefined' || user.name === 'Display Name undefined') {
-            console.log("Found corrupted user data. Resetting...");
-            setUser({
-                ...user,
-                name: 'User',
-                displayName: 'User',
-                username: `user${user.id || '1'}`
-            });
-        }
-
-        return () => clearTimeout(timer);
-    }, []);
+    }, [user, coins, setCoins, setUser]);
 
     if (showSplash) {
         return <SplashScreen />;
@@ -109,9 +127,22 @@ function App() {
     return (
         <BrowserRouter>
             <GlobalHUD />
+            <MusicPlayerBar />  {/* Persistent Music Bar */}
             <BackgroundMusic />
             <NotificationSimulator />
             <NotificationPopup />
+
+            {/* Daily Login Modal */}
+            <AnimatePresence>
+                {dailyLoginData && (
+                    <DailyLoginModal
+                        streak={dailyLoginData.streak}
+                        coins={dailyLoginData.coins}
+                        diamonds={dailyLoginData.diamonds}
+                        onClose={() => setDailyLoginData(null)}
+                    />
+                )}
+            </AnimatePresence>
 
             <AnimatePresence mode="wait">
                 <Routes>
@@ -121,7 +152,6 @@ function App() {
                     <Route path="/matches" element={<Matches />} />
                     <Route path="/call/:userId" element={<VideoCall />} />
                     <Route path="/messages" element={<Messages />} />
-                    {/* Fixed Route: Uses Profile instead of UserProfile */}
                     <Route path="/user/:userId" element={<Profile />} />
                     <Route path="/chats" element={<Chats />} />
                     <Route path="/chat/:conversationId" element={<Chat />} />
@@ -143,8 +173,13 @@ function App() {
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </AnimatePresence>
+            {/* Global Ad Banner - Hide on Splash, Onboarding, and Start Screen */}
+            {!showSplash && window.location.pathname !== '/onboarding' && window.location.pathname !== '/' && (
+                <AdBanner position="bottom" style={{ position: 'fixed', bottom: '60px', left: 0, right: 0, zIndex: 90 }} />
+            )}
         </BrowserRouter>
     );
 }
 
 export default App;
+
